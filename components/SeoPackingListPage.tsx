@@ -72,7 +72,7 @@ export function SeoPackingListPage({
                         <li key={item.id} className="p-4">
                           <div className="flex flex-wrap items-center gap-2 text-sm font-bold text-slate-950">
                             <span>{item.name}</span>
-                            {item.quantity && item.quantity > 1 ? (
+                            {(item.quantity ?? 0) > 1 ? (
                               <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-black text-slate-600">Qty {item.quantity}</span>
                             ) : null}
                             {item.optional ? (
