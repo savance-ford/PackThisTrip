@@ -93,8 +93,8 @@ export function SeoPackingListPage({
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <h2 className="text-lg font-black tracking-tight text-slate-950">Packing tips</h2>
               <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-                {tips.map((tip) => (
-                  <li key={tip} className="border-l-2 border-slate-200 pl-3">{tip}</li>
+                {tips.map((tip, index) => (
+                  <li key={index} className="border-l-2 border-slate-200 pl-3">{tip}</li>
                 ))}
               </ul>
             </section>
