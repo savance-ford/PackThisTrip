@@ -18,7 +18,7 @@ function groupedItems(items: PackingItem[]) {
   return CATEGORY_ORDER.map((category) => ({
     category,
     items: items.filter((item) => item.category === category)
-  })).filter((group): group is { category: PackingCategory; items: PackingItem[] } => group.items.length > 0);
+  })).filter((group) => group.items.length > 0);
 }
 
 export function SeoPackingListPage({
