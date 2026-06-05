@@ -3,6 +3,7 @@ import Link from "next/link";
 export function Footer() {
   const links = [
     ["Packing List Generator", "/packing-list-generator"],
+    ["Destination Packing Lists", "/packing-list"],
     ["Carry-On Packing List", "/carry-on-packing-list"],
     ["Beach Vacation Packing List", "/beach-vacation-packing-list"],
     ["International Travel Packing List", "/international-travel-packing-list"],

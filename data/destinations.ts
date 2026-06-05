@@ -24,6 +24,17 @@ export const DESTINATIONS: Destination[] = [
     notes: "Pack comfortable walking shoes, layers, and one polished outfit if you plan on restaurants or events."
   },
   {
+    slug: "paris",
+    name: "Paris",
+    region: "Europe",
+    climateTags: ["mild", "rain", "cool-winter", "city"],
+    isInternationalDefault: true,
+    outletType: ["C", "E"],
+    commonActivities: ["city", "museums", "food", "business"],
+    walkingHeavy: true,
+    notes: "Paris trips usually involve long walking days, museums, restaurants, and cool damp winters."
+  },
+  {
     slug: "japan",
     name: "Japan",
     region: "Asia",
@@ -44,6 +55,17 @@ export const DESTINATIONS: Destination[] = [
     commonActivities: ["city", "museums", "hiking"],
     walkingHeavy: true,
     notes: "Rain is common, so a compact rain layer is useful even when the forecast looks mild."
+  },
+  {
+    slug: "london",
+    name: "London",
+    region: "United Kingdom",
+    climateTags: ["cool", "rain", "city", "mild-summer"],
+    isInternationalDefault: true,
+    outletType: ["G"],
+    commonActivities: ["city", "museums", "business"],
+    walkingHeavy: true,
+    notes: "London packing should account for rain, transit, walking, and cool shoulder-season weather."
   },
   {
     slug: "mexico",
