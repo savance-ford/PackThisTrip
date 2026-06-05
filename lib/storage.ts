@@ -24,6 +24,7 @@ function isTripConfig(value: unknown): value is TripConfig {
     typeof value.destinationName === "string" &&
     typeof value.month === "string" &&
     typeof value.durationDays === "number" &&
+    !Number.isNaN(value.durationDays) &&
     LUGGAGE_TYPES.includes(value.luggageType as LuggageType) &&
     TRAVELER_TYPES.includes(value.travelerType as TravelerType) &&
     Array.isArray(value.tripTypes) &&
