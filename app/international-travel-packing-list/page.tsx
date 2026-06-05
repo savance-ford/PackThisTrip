@@ -6,7 +6,10 @@ const page = seoPackingListPages.internationalTravelPackingList;
 
 export const metadata: Metadata = {
   title: { absolute: page.metadataTitle },
-  description: page.description
+  description: page.description,
+  alternates: {
+    canonical: "/international-travel-packing-list"
+  }
 };
 
 export default function InternationalTravelPackingListPage() {

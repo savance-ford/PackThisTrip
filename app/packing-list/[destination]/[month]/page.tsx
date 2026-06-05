@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/Button";
+import { GearRecommendations } from "@/components/GearRecommendations";
 import { TripSummary } from "@/components/TripSummary";
 import { APPROVED_DESTINATION_MONTHS, getClimateProfile } from "@/data/climateProfiles";
 import { CATEGORY_LABELS, CATEGORY_ORDER, generatePackingList } from "@/lib/generatePackingList";
@@ -76,7 +77,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: { absolute: `What to Pack for ${tripConfig.destinationName} in ${displayMonth} - PackThisTrip` },
-    description: `Use this smart packing list for ${tripConfig.destinationName} in ${displayMonth}, with weather-aware clothing, travel gear, documents, and activity recommendations.`
+    description: `Use this smart packing list for ${tripConfig.destinationName} in ${displayMonth}, with weather-aware clothing, travel gear, documents, and activity recommendations.`,
+    alternates: {
+      canonical: `/packing-list/${destinationSlug.toLowerCase()}/${month.toLowerCase()}`
+    }
   };
 }
 
@@ -179,6 +183,8 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
                 ))}
               </div>
             </section>
+
+            <GearRecommendations items={items} tripConfig={tripConfig} />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Why these items?</p>

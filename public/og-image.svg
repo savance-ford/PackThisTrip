@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="PackThisTrip">
+  <rect width="1200" height="630" fill="#f8fafc"/>
+  <rect x="90" y="90" width="1020" height="450" rx="36" fill="#0f172a"/>
+  <text x="150" y="255" fill="#ffffff" font-family="Arial, sans-serif" font-size="78" font-weight="800">PackThisTrip</text>
+  <text x="150" y="340" fill="#cbd5e1" font-family="Arial, sans-serif" font-size="38">Smart packing lists for any trip.</text>
+  <text x="150" y="430" fill="#ffffff" font-family="Arial, sans-serif" font-size="30">Destination, weather, luggage, and activity-aware checklists.</text>
+</svg>

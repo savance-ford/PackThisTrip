@@ -5,7 +5,10 @@ import { getDestination } from "@/data/destinations";
 
 export const metadata: Metadata = {
   title: "Destination Packing Lists",
-  description: "Browse PackThisTrip destination and month packing lists built from local climate profiles and the smart packing engine."
+  description: "Browse PackThisTrip destination and month packing lists built from local climate profiles and the smart packing engine.",
+  alternates: {
+    canonical: "/packing-list"
+  }
 };
 
 function pretty(value: string) {

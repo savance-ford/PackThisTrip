@@ -20,6 +20,9 @@ export function Footer() {
         <div>
           <p className="font-bold text-slate-950">PackThisTrip</p>
           <p className="mt-1 text-sm text-slate-500">Smart packing lists for any trip.</p>
+          <p className="mt-3 max-w-xl text-xs leading-5 text-slate-500">
+            Packing recommendations are estimates. Always confirm airline baggage rules, destination requirements, weather conditions, and personal medical needs before traveling.
+          </p>
         </div>
         <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
           {links.map(([label, href]) => (

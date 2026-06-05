@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { PackingChecklist } from "@/components/PackingChecklist";
 import { PackingForm } from "@/components/PackingForm";
 import { generatePackingList } from "@/lib/generatePackingList";
-import { clearSavedChecklist, loadCheckedItems, loadTripConfig, saveCheckedItems, saveTripConfig } from "@/lib/storage";
+import { clearSavedChecklist, loadCheckedItems, loadLastSavedAt, loadTripConfig, saveCheckedItems, saveTripConfig } from "@/lib/storage";
 import type { PackingItem, TripConfig } from "@/lib/types";
 
 export function PackingGeneratorClient() {
@@ -13,16 +13,19 @@ export function PackingGeneratorClient() {
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [editing, setEditing] = useState(true);
   const [loaded, setLoaded] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
 
   useEffect(() => {
     const savedConfig = loadTripConfig();
     const savedChecked = loadCheckedItems();
+    const savedAt = loadLastSavedAt();
 
     if (savedConfig) {
       setTripConfig(savedConfig);
       setItems(generatePackingList(savedConfig));
       setCheckedItems(savedChecked);
       setEditing(false);
+      setLastSavedAt(savedAt);
     }
 
     setLoaded(true);
@@ -40,6 +43,7 @@ export function PackingGeneratorClient() {
 
     saveTripConfig(config);
     saveCheckedItems(relevantCheckedItems);
+    setLastSavedAt(loadLastSavedAt());
   }
 
   function handleToggleItem(id: string) {
@@ -49,11 +53,13 @@ export function PackingGeneratorClient() {
 
     setCheckedItems(next);
     saveCheckedItems(next);
+    setLastSavedAt(loadLastSavedAt());
   }
 
   function handleResetChecklist() {
     setCheckedItems([]);
     saveCheckedItems([]);
+    setLastSavedAt(loadLastSavedAt());
   }
 
   function handleClearAndEdit() {
@@ -61,6 +67,7 @@ export function PackingGeneratorClient() {
     setTripConfig(null);
     setItems([]);
     setCheckedItems([]);
+    setLastSavedAt(null);
     setEditing(true);
   }
 
@@ -83,8 +90,10 @@ export function PackingGeneratorClient() {
       checkedItems={checkedItems}
       onToggleItem={handleToggleItem}
       onResetChecklist={handleResetChecklist}
+      onClearSavedTrip={handleClearAndEdit}
       onEditDetails={() => setEditing(true)}
       onPrint={() => window.print()}
+      lastSavedAt={lastSavedAt}
     />
   );
 }

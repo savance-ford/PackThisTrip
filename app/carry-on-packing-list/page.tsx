@@ -6,7 +6,10 @@ const page = seoPackingListPages.carryOnPackingList;
 
 export const metadata: Metadata = {
   title: { absolute: page.metadataTitle },
-  description: page.description
+  description: page.description,
+  alternates: {
+    canonical: "/carry-on-packing-list"
+  }
 };
 
 export default function CarryOnPackingListPage() {

@@ -6,7 +6,10 @@ const page = seoPackingListPages.babyTravelPackingList;
 
 export const metadata: Metadata = {
   title: { absolute: page.metadataTitle },
-  description: page.description
+  description: page.description,
+  alternates: {
+    canonical: "/baby-travel-packing-list"
+  }
 };
 
 export default function BabyTravelPackingListPage() {
