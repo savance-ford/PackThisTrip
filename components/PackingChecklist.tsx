@@ -1,6 +1,7 @@
 import { CATEGORY_ORDER } from "@/lib/generatePackingList";
 import type { PackingItem, TripConfig } from "@/lib/types";
 import { ChecklistCategory } from "@/components/ChecklistCategory";
+import { GearRecommendations } from "@/components/GearRecommendations";
 import { ProgressBar } from "@/components/ProgressBar";
 import { TripSummary } from "@/components/TripSummary";
 import { Button } from "@/components/Button";
@@ -11,8 +12,10 @@ type PackingChecklistProps = {
   checkedItems: string[];
   onToggleItem: (id: string) => void;
   onResetChecklist: () => void;
+  onClearSavedTrip: () => void;
   onEditDetails: () => void;
   onPrint: () => void;
+  lastSavedAt: string | null;
 };
 
 export function PackingChecklist({
@@ -21,10 +24,15 @@ export function PackingChecklist({
   checkedItems,
   onToggleItem,
   onResetChecklist,
+  onClearSavedTrip,
   onEditDetails,
-  onPrint
+  onPrint,
+  lastSavedAt
 }: PackingChecklistProps) {
   const checkedCount = items.filter((item) => checkedItems.includes(item.id)).length;
+  const lastSavedLabel = lastSavedAt
+    ? new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(lastSavedAt))
+    : null;
 
   return (
     <div className="space-y-6">
@@ -38,14 +46,21 @@ export function PackingChecklist({
           <Button variant="secondary" onClick={onPrint}>Print checklist</Button>
           <Button variant="secondary" onClick={onEditDetails}>Edit trip details</Button>
           <Button variant="ghost" onClick={onResetChecklist} className="text-white hover:bg-white/10">Reset checklist</Button>
+          <Button variant="ghost" onClick={onClearSavedTrip} className="text-white hover:bg-white/10">Clear saved trip</Button>
         </div>
       </div>
 
       <TripSummary config={config} />
+
+      <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950 print-hidden">
+        <p className="font-bold">Saved on this device</p>
+        <p className="mt-1">{lastSavedLabel ? `Last saved ${lastSavedLabel}.` : "Your checklist is saved locally in this browser as you update it."}</p>
+      </div>
+
       <ProgressBar packedCount={checkedCount} totalCount={items.length} />
 
       <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-950 print-hidden">
-        Recommendations are estimates. Adjust your list based on your airline, lodging, personal needs, local conditions, and any destination-specific rules.
+        Packing recommendations are estimates. Always confirm airline baggage rules, destination requirements, weather conditions, and personal medical needs before traveling.
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2 print:block print:space-y-4">
@@ -59,6 +74,8 @@ export function PackingChecklist({
           />
         ))}
       </div>
+
+      <GearRecommendations items={items} tripConfig={config} />
     </div>
   );
 }

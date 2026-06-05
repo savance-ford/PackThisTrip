@@ -6,7 +6,10 @@ const page = seoPackingListPages.beachVacationPackingList;
 
 export const metadata: Metadata = {
   title: { absolute: page.metadataTitle },
-  description: page.description
+  description: page.description,
+  alternates: {
+    canonical: "/beach-vacation-packing-list"
+  }
 };
 
 export default function BeachVacationPackingListPage() {

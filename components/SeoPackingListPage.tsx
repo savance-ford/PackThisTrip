@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/Button";
+import { GearRecommendations } from "@/components/GearRecommendations";
 import { TripSummary } from "@/components/TripSummary";
 import { CATEGORY_LABELS, CATEGORY_ORDER, generatePackingList } from "@/lib/generatePackingList";
 import type { PackingCategory, PackingItem, TripConfig } from "@/lib/types";
@@ -87,6 +88,8 @@ export function SeoPackingListPage({
                 ))}
               </div>
             </section>
+
+            <GearRecommendations items={items} tripConfig={tripConfig} />
           </div>
 
           <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">

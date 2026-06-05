@@ -3,7 +3,10 @@ import { PackingGeneratorClient } from "@/components/PackingGeneratorClient";
 
 export const metadata: Metadata = {
   title: "Packing List Generator",
-  description: "Create a personalized packing checklist for any trip, destination, season, and activity."
+  description: "Create a personalized packing checklist for any trip, destination, season, and activity.",
+  alternates: {
+    canonical: "/packing-list-generator"
+  }
 };
 
 export default function PackingListGeneratorPage() {

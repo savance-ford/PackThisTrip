@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/Button";
 import { ExampleChecklistPreview } from "@/components/ExampleChecklistPreview";
 import { FeatureCard } from "@/components/FeatureCard";
 import { HowItWorks } from "@/components/HowItWorks";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/"
+  }
+};
 
 const features = [
   {

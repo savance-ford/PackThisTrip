@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "PackThisTrip provides packing suggestions for general planning purposes. Recommendations are estimates and should be adjusted for "
+  description: "PackThisTrip provides packing suggestions for general planning purposes. Recommendations are estimates and should be adjusted before travel.",
+  alternates: {
+    canonical: "/terms"
+  }
 };
 
 export default function Page() {

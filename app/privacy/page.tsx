@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "PackThisTrip does not require an account and does not use a database in this MVP. Saved checklist data is stored locally on your o"
+  description: "PackThisTrip does not require an account and stores saved checklist data locally on your own device.",
+  alternates: {
+    canonical: "/privacy"
+  }
 };
 
 export default function Page() {
