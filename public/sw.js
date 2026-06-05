@@ -27,6 +27,29 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
+  const isNavigationRequest =
+    event.request.mode === "navigate" ||
+    event.request.destination === "document" ||
+    event.request.headers.get("accept")?.includes("text/html");
+
+  if (isNavigationRequest) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        if (!response || response.status !== 200 || response.type !== "basic") {
+          return response;
+        }
+
+        const responseToCache = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+
+        return response;
+      }).catch(() => caches.match(event.request).then((cached) => cached || caches.match("/")))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
@@ -42,7 +65,7 @@ self.addEventListener("fetch", (event) => {
         });
 
         return response;
-      }).catch(() => caches.match("/"));
+      });
     })
   );
 });
