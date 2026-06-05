@@ -192,17 +192,19 @@ export const CLIMATE_PROFILES: ClimateProfile[] = [
 ];
 
 export function getClimateProfile(destinationSlug: string, month: string): ClimateProfile | undefined {
+  const normalizedSlug = destinationSlug.toLowerCase();
   const normalizedMonth = month.toLowerCase();
 
   return CLIMATE_PROFILES.find(
-    (profile) => profile.destinationSlug === destinationSlug && profile.month === normalizedMonth
+    (profile) => profile.destinationSlug === normalizedSlug && profile.month === normalizedMonth
   );
 }
 
 export function isApprovedDestinationMonth(destinationSlug: string, month: string): boolean {
+  const normalizedSlug = destinationSlug.toLowerCase();
   const normalizedMonth = month.toLowerCase();
 
   return APPROVED_DESTINATION_MONTHS.some(
-    (item) => item.destination === destinationSlug && item.month === normalizedMonth
+    (item) => item.destination === normalizedSlug && item.month === normalizedMonth
   );
 }
