@@ -54,19 +54,23 @@ export const viewport: Viewport = {
   themeColor: "#0f172a"
 };
 
+const microsoftClarityId = process.env.NEXT_PUBLIC_MICROSOFT_CLARITY_ID;
+
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
       <body className="min-h-screen bg-slate-50 font-sans antialiased">
-        <Script id="microsoft-clarity" strategy="afterInteractive">
-          {`
-            (function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "x2eqohf7gn");
-          `}
-        </Script>
+        {microsoftClarityId ? (
+          <Script id="microsoft-clarity" strategy="afterInteractive">
+            {`
+              (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", ${JSON.stringify(microsoftClarityId)});
+            `}
+          </Script>
+        ) : null}
         <ServiceWorkerRegistration />
         <Header />
         <main>{children}</main>
