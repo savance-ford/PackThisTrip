@@ -30,9 +30,11 @@ export type PageQualityScore = {
 };
 
 export function scorePageQuality(destinationSlug: string, month: string): PageQualityScore {
-  const destination = getDestination(destinationSlug);
-  const climateProfile = getClimateProfile(destinationSlug, month);
-  const tripConfig = getDestinationMonthTripConfig(destinationSlug, month);
+  const normalizedDestinationSlug = destinationSlug.toLowerCase();
+  const normalizedMonth = month.toLowerCase();
+  const destination = getDestination(normalizedDestinationSlug);
+  const climateProfile = getClimateProfile(normalizedDestinationSlug, normalizedMonth);
+  const tripConfig = getDestinationMonthTripConfig(normalizedDestinationSlug, normalizedMonth);
   const reasons: string[] = [];
   let score = 0;
 
@@ -48,7 +50,7 @@ export function scorePageQuality(destinationSlug: string, month: string): PageQu
     reasons.push("Climate profile does not exist.");
   }
 
-  if (isApprovedDestinationMonth(destinationSlug, month)) {
+  if (isApprovedDestinationMonth(normalizedDestinationSlug, normalizedMonth)) {
     score += 20;
   } else {
     reasons.push("Destination/month combination is not in the approved starter list.");

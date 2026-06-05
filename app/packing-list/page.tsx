@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   description: "Browse PackThisTrip destination and month packing lists built from local climate profiles and the smart packing engine."
 };
 
-function prettyMonth(month: string) {
-  return month.replace(/\b\w/g, (char) => char.toUpperCase());
+function pretty(value: string) {
+  return value.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 export default function DestinationPackingListsPage() {
@@ -18,7 +18,7 @@ export default function DestinationPackingListsPage() {
 
     return {
       ...item,
-      destinationName: destination?.name ?? item.destination,
+      destinationName: destination?.name ?? pretty(item.destination),
       href: `/packing-list/${item.destination}/${item.month}`
     };
   });
@@ -41,8 +41,8 @@ export default function DestinationPackingListsPage() {
               href={page.href}
               className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
             >
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{prettyMonth(page.month)}</p>
-              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-950">What to Pack for {page.destinationName} in {prettyMonth(page.month)}</h2>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{pretty(page.month)}</p>
+              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-950">What to Pack for {page.destinationName} in {pretty(page.month)}</h2>
               <p className="mt-2 text-sm leading-6 text-slate-600">View the generated checklist, weather notes, trip assumptions, and related packing pages.</p>
             </Link>
           ))}
