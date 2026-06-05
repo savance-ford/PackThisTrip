@@ -22,6 +22,8 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+Set `NEXT_PUBLIC_MICROSOFT_CLARITY_ID` when you want Microsoft Clarity tracking enabled.
+
 ## Checks
 
 ```bash
