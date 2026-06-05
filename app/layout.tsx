@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/icons/packthistrip-icon.svg",
-    apple: "/icons/packthistrip-icon.svg"
+    apple: "/icons/packthistrip-icon.png"
   },
   openGraph: {
     title: "PackThisTrip - Smart Packing Lists for Any Trip",
