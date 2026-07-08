@@ -10,6 +10,8 @@ export type ClimateProfile = {
   rainLikelihood: RainLikelihood;
   recommendedTripTypes: TripType[];
   packingNotes: string[];
+  metadataTitle?: string;
+  metadataDescription?: string;
   hotWeather: boolean;
   coldWeather: boolean;
   rainExpected: boolean;
@@ -128,15 +130,22 @@ export const CLIMATE_PROFILES: ClimateProfile[] = [
   {
     destinationSlug: "mexico",
     month: "july",
-    avgTempF: 82,
-    weatherSummary: "July in Mexico is hot in many popular regions, with strong sun, beach conditions, and higher humidity or rain in coastal areas.",
-    rainLikelihood: "medium",
-    recommendedTripTypes: ["beach", "international"],
+    avgTempF: 86,
+    weatherSummary: "Typical July conditions in Mexico are generally hot, with strong sun, humidity in many areas, and afternoon rain or tropical showers possible depending on the region.",
+    rainLikelihood: "high",
+    recommendedTripTypes: ["city", "beach", "international", "cruise"],
     packingNotes: [
-      "Heat and sun make breathable clothes, sunscreen, sunglasses, a hat, and hydration gear important.",
-      "Beach items like swimwear, sandals, reef-safe sunscreen, and a beach bag are likely to be used often.",
-      "International travel documents should be packed with backups before adding optional activity gear."
+      "Breathable shirts, shorts, and lightweight pants are more useful than heavy denim in typical July heat and humidity.",
+      "Strong sun makes sunscreen, sunglasses, a sun hat, and a reusable water bottle core packing items.",
+      "Pack light rain protection because many Mexico destinations can get afternoon rain or tropical showers in July.",
+      "Comfortable walking shoes help with airports, city days, ruins, tours, and excursions, while sandals work well for beach or pool time.",
+      "Beach and swim items like a swimsuit, sandals, reef-safe sunscreen, and a beach bag fit many July Mexico itineraries.",
+      "International essentials such as a passport, document copies, confirmations, and a power adapter should be packed before optional extras.",
+      "Bug spray is worth considering for humid, tropical, or outdoor-heavy plans.",
+      "Carry-on travelers should keep liquids organized for TSA screening and avoid full-size bottles."
     ],
+    metadataTitle: "What to Pack for Mexico in July: Hot Weather Packing List",
+    metadataDescription: "Build a smart packing list for Mexico in July with breathable clothing, rain gear, sun protection, beach items, travel documents, and carry-on essentials.",
     hotWeather: true,
     coldWeather: false,
     rainExpected: true
