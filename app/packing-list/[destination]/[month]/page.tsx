@@ -173,11 +173,19 @@ function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, desti
   const displayMonth = pretty(climateProfile.month);
   const destinationName = tripConfig.destinationName;
   const cityOrWalking = tripConfig.tripTypes.includes("city") || destination?.walkingHeavy;
+  const packingFocus = [
+    climateProfile.hotWeather ? "breathable clothing and sun protection" : null,
+    climateProfile.coldWeather ? "warm layers and cold-weather accessories" : null,
+    !climateProfile.hotWeather && !climateProfile.coldWeather ? "season-appropriate layers" : null,
+    climateProfile.rainExpected ? "light rain gear" : null,
+    tripConfig.tripTypes.includes("beach") ? "swim and beach items" : null,
+    tripConfig.isInternational ? "passport and travel documents" : null
+  ].filter(Boolean);
 
   return [
     {
       question: `What should I pack for ${destinationName} in ${displayMonth}?`,
-      answer: `Pack breathable clothing, sun protection, ${climateProfile.rainExpected ? "light rain gear, " : ""}${tripConfig.tripTypes.includes("beach") ? "swim and beach items, " : ""}${tripConfig.isInternational ? "passport and travel documents, " : ""}plus the basics generated in the checklist.`
+      answer: `Pack ${packingFocus.join(", ")}, plus the basics generated in the checklist.`
     },
     {
       question: `What should I wear in ${destinationName} in ${displayMonth}?`,
@@ -222,12 +230,12 @@ function buildFaqJsonLd(faqs: Faq[]) {
 }
 
 function buildMetadataTitle(tripConfig: TripConfig, climateProfile: ClimateProfile) {
+  if (climateProfile.metadataTitle) {
+    return climateProfile.metadataTitle;
+  }
+
   const displayMonth = pretty(climateProfile.month);
   const baseTitle = `What to Pack for ${tripConfig.destinationName} in ${displayMonth}`;
-
-  if (tripConfig.destinationSlug === "mexico" && climateProfile.month === "july") {
-    return "What to Pack for Mexico in July: Hot Weather Packing List";
-  }
 
   if (climateProfile.hotWeather) {
     return `${baseTitle}: Hot Weather Packing List`;
@@ -241,12 +249,11 @@ function buildMetadataTitle(tripConfig: TripConfig, climateProfile: ClimateProfi
 }
 
 function buildMetadataDescription(tripConfig: TripConfig, climateProfile: ClimateProfile) {
-  const displayMonth = pretty(climateProfile.month);
-
-  if (tripConfig.destinationSlug === "mexico" && climateProfile.month === "july") {
-    return "Build a smart packing list for Mexico in July with breathable clothing, rain gear, sun protection, beach items, travel documents, and carry-on essentials.";
+  if (climateProfile.metadataDescription) {
+    return climateProfile.metadataDescription;
   }
 
+  const displayMonth = pretty(climateProfile.month);
   const details = [
     climateProfile.hotWeather ? "hot-weather clothing" : null,
     climateProfile.coldWeather ? "cold-weather layers" : null,

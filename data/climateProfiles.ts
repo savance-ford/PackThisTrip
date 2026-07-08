@@ -10,6 +10,8 @@ export type ClimateProfile = {
   rainLikelihood: RainLikelihood;
   recommendedTripTypes: TripType[];
   packingNotes: string[];
+  metadataTitle?: string;
+  metadataDescription?: string;
   hotWeather: boolean;
   coldWeather: boolean;
   rainExpected: boolean;
@@ -142,6 +144,8 @@ export const CLIMATE_PROFILES: ClimateProfile[] = [
       "Bug spray is worth considering for humid, tropical, or outdoor-heavy plans.",
       "Carry-on travelers should keep liquids organized for TSA screening and avoid full-size bottles."
     ],
+    metadataTitle: "What to Pack for Mexico in July: Hot Weather Packing List",
+    metadataDescription: "Build a smart packing list for Mexico in July with breathable clothing, rain gear, sun protection, beach items, travel documents, and carry-on essentials.",
     hotWeather: true,
     coldWeather: false,
     rainExpected: true
