@@ -39,7 +39,8 @@ const related = {
   sevenDay: { label: "7-Day Trip Packing List", href: "/7-day-trip-packing-list" },
   weekend: { label: "Weekend Trip Packing List", href: "/weekend-trip-packing-list" },
   winter: { label: "Winter Travel Packing List", href: "/winter-travel-packing-list" },
-  summer: { label: "Summer Travel Packing List", href: "/summer-travel-packing-list" }
+  summer: { label: "Summer Travel Packing List", href: "/summer-travel-packing-list" },
+  mexicoJuly: { label: "What to pack for Mexico in July", href: "/packing-list/mexico/july" }
 };
 
 export const seoPackingListPages = {
@@ -67,7 +68,7 @@ export const seoPackingListPages = {
       "Use a dedicated beach bag so sunscreen, water, and wet items stay separate from clean clothes.",
       "Bring sun protection even when the forecast looks cloudy; beach exposure adds up quickly."
     ],
-    relatedLinks: [related.summer, related.family, related.cruise, related.carryOn]
+    relatedLinks: [related.mexicoJuly, related.summer, related.family, related.cruise, related.carryOn]
   },
   cruisePackingList: {
     title: "Cruise Packing List",
@@ -106,7 +107,7 @@ export const seoPackingListPages = {
       "Check outlet types and voltage before packing electronics that need more than a USB charger.",
       "Build around comfortable shoes; international city trips often include more walking than expected."
     ],
-    relatedLinks: [related.carryOn, related.sevenDay, related.winter, related.summer]
+    relatedLinks: [related.mexicoJuly, related.carryOn, related.sevenDay, related.winter, related.summer]
   },
   familyVacationPackingList: {
     title: "Family Vacation Packing List",
@@ -184,6 +185,6 @@ export const seoPackingListPages = {
       "Bring sun protection and hydration gear even when beach time is only part of the trip.",
       "Separate wet or sandy items from electronics, documents, and clean clothes."
     ],
-    relatedLinks: [related.beach, related.international, related.family, related.cruise]
+    relatedLinks: [related.mexicoJuly, related.beach, related.international, related.family, related.cruise]
   }
 } satisfies Record<string, SeoPackingListPageData>;
