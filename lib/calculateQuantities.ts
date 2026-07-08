@@ -32,7 +32,7 @@ export function calculateClothingQuantities(tripConfig: TripConfig): QuantityMap
   let effectiveDays = cappedDays;
 
   if (packLight || luggageType === "carry-on") {
-    effectiveDays = Math.max(3, effectiveDays - 1);
+    effectiveDays = Math.min(cappedDays, Math.max(3, effectiveDays - 1));
   }
 
   const multiplier = travelerMultiplier(travelerType);
