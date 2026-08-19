@@ -7,7 +7,14 @@ export function ProgressBar({ packedCount, totalCount }: ProgressBarProps) {
   const percent = totalCount === 0 ? 0 : Math.round((packedCount / totalCount) * 100);
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm print-card">
+    <div
+      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm print-card"
+      role="progressbar"
+      aria-label="Packing progress"
+      aria-valuemin={0}
+      aria-valuemax={totalCount}
+      aria-valuenow={packedCount}
+    >
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-sm font-bold text-slate-950">Packing progress</p>

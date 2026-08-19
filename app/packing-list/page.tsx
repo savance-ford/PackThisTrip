@@ -44,7 +44,7 @@ export default function DestinationPackingListsPage() {
             href={featuredPage.href}
             className="mt-10 block rounded-2xl border border-slate-300 bg-white p-6 shadow-sm transition hover:border-slate-400 hover:shadow-md"
           >
-            <p className="w-fit rounded-full bg-amber-50 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-amber-700">Early popular pick</p>
+            <p className="w-fit rounded-full bg-amber-50 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-amber-700">Featured checklist</p>
             <h2 className="mt-4 text-2xl font-black tracking-tight text-slate-950">What to pack for {featuredPage.destinationName} in {pretty(featuredPage.month)}</h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
               A weather-aware packing list for {featuredPage.destinationName} in {pretty(featuredPage.month)} with clothing, gear, and travel essentials.

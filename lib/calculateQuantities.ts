@@ -38,8 +38,11 @@ export function calculateClothingQuantities(tripConfig: TripConfig): QuantityMap
   const multiplier = travelerMultiplier(travelerType);
   const isBeach = tripTypes.includes("beach") || tripTypes.includes("cruise");
   const isBusiness = tripTypes.includes("business");
+  const isCompactWardrobe = packLight || luggageType === "carry-on";
   const pantsQuantity = hotWeather || isBeach
-    ? Math.max(1, Math.min(2, Math.ceil(effectiveDays / 3)))
+    ? isCompactWardrobe
+      ? 1
+      : Math.max(1, Math.min(2, Math.ceil(effectiveDays / 3)))
     : Math.max(1, Math.ceil(effectiveDays / 2));
 
   const quantities: QuantityMap = {
@@ -62,7 +65,9 @@ export function calculateClothingQuantities(tripConfig: TripConfig): QuantityMap
   }
 
   if (hotWeather || isBeach) {
-    quantities.shorts = Math.max(2, Math.ceil(effectiveDays / 2)) * multiplier;
+    quantities.shorts = (isCompactWardrobe
+      ? Math.max(1, Math.ceil(effectiveDays / 3))
+      : Math.max(2, Math.ceil(effectiveDays / 2))) * multiplier;
     quantities["breathable-shirts"] = Math.max(quantities["breathable-shirts"] ?? 0, Math.max(1, Math.ceil(effectiveDays / 2)) * multiplier);
   }
 
