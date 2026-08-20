@@ -46,6 +46,7 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   const tripLabel = `${tripConfig.destinationName} in ${prettyMonth(tripConfig.month)}`;
   const destinationTags = destination?.climateTags ?? [];
   const isTropicalOrHumid = destinationTags.some((tag) => ["tropical", "humid", "humid-summer", "jungle"].includes(tag));
+  const hasStrongSun = destinationTags.some((tag) => ["sunny", "hot-summer", "tropical"].includes(tag));
   const hasOutdoorRainPlan = tripTypes.some((tripType) => ["disney", "hiking", "camping"].includes(tripType));
 
   const addItem = (id: string, reason: string, optional = false, quantity?: number) => {
@@ -83,8 +84,12 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   addItem("socks", "Quantity is calculated from trip length, laundry access, pack-light mode, and traveler type.");
   addItem("id", "Added because ID is needed for airports, lodging, car rentals, and emergencies.");
   addItem("luggage-tag", "Added to make bags easier to identify if they are separated or checked.");
-  addItem("t-shirts", "Added as a versatile core clothing item based on your trip length.");
-  addItem("pants", "Added as reusable bottoms with smart quantity capping instead of one pair per day.");
+  addItem("t-shirts", tripConfig.hotWeather
+    ? `Included as versatile lightweight tops for typical hot-weather days during ${tripLabel}.`
+    : "Added as a versatile core clothing item based on your trip length.");
+  addItem("pants", tripConfig.hotWeather
+    ? "A small number of lightweight pants adds coverage for travel, sightseeing, or dining while keeping a warm-weather wardrobe compact."
+    : "Added as reusable bottoms with smart quantity capping instead of one pair per day.");
   addItem("sleepwear", "Added for overnight comfort without overpacking.");
   addItem("hand-sanitizer", "Added as a compact hygiene item for flights, transit, and public spaces.", true);
   addItem("medicine-kit", "Added as a small backup for common travel issues like headaches, stomach discomfort, or minor scrapes.", true);
@@ -98,19 +103,18 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   if (international) {
     addItem("passport", `Added because ${tripConfig.destinationName} is treated as an international trip and a passport may be needed for border crossing.`);
     addItem("travel-insurance-documents", "Included as backup documentation for medical care, trip delays, or unexpected international travel issues.", true);
-    addItem("universal-power-adapter", "Added because international trips can require a power adapter for charging phones and other electronics.");
     addItem("document-copies", "Included because international travelers should have backup copies of important documents in case originals are lost or stolen.", true);
     addItem("boarding-pass", "Added for airport travel and quick check-in access.");
     addItem("hotel-confirmation", "Added because lodging details can be useful for check-in, immigration questions, or offline backup access.", true);
     addItem("emergency-contacts", "Added as a safety backup for international travel, unfamiliar destinations, and urgent contact needs.", true);
   }
 
-  if (isEurope(region)) {
-    addItem("europe-plug-adapter", `Added because ${tripConfig.destinationName} uses European plug types ${destination?.outletType.join("/") || "C/F"}.`);
-  }
-
-  if (isUnitedKingdom(region)) {
+  if (international && isUnitedKingdom(region)) {
     addItem("uk-plug-adapter", "Added because United Kingdom outlets use Type G plugs.");
+  } else if (international && isEurope(region)) {
+    addItem("europe-plug-adapter", `Added because ${tripConfig.destinationName} uses European plug types ${destination?.outletType.join("/") || "C/F"}.`);
+  } else if (international && destination?.outletType.some((outlet) => !["A", "B"].includes(outlet))) {
+    addItem("universal-power-adapter", `Added because ${tripConfig.destinationName} uses outlet types that can differ from common North American A/B plugs.`);
   }
 
   // Luggage rules
@@ -155,12 +159,16 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   }
 
   if (tripConfig.hotWeather) {
-    addItem("sunglasses", `Recommended because ${tripLabel} is typically sunny or bright, and eye protection helps on walking, beach, and transit days.`);
+    addItem("sunglasses", hasStrongSun
+      ? `Useful for strong daytime sun during outdoor sightseeing, beach time, and transit days in ${tripConfig.destinationName}.`
+      : `Recommended because ${tripLabel} can be bright during walking, beach, and transit days.`);
     addItem("sun-hat", "Added for extra sun protection during outdoor meals, beach time, tours, and long walks.");
-    addItem("sunscreen", "Added because hot-weather trips increase sun exposure during sightseeing, swimming, and outdoor travel days.");
+    addItem("sunscreen", hasStrongSun
+      ? "Useful for strong daytime sun during outdoor sightseeing, swimming, and extended beach days."
+      : "Useful for outdoor sightseeing, swimming, and extended daytime exposure.");
     addItem("shorts", "Added because hot or beach-style trips need lightweight bottoms that are comfortable in warm weather.");
-    addItem("breathable-shirts", `Recommended because ${tripLabel} is typically hot, and breathable shirts are more comfortable for walking and sightseeing.`);
-    addItem("reusable-water-bottle", "Added because hot-weather travel requires steady hydration during airports, tours, beach time, and city walks.", true);
+    addItem("breathable-shirts", `Lightweight shirts are useful for typical ${isTropicalOrHumid ? "hot and humid" : "hot"} conditions during ${tripLabel}, especially on long sightseeing days.`);
+    addItem("reusable-water-bottle", "Keeps water handy during airports, tours, beach time, and long city walks in hot weather.", true);
     addItem("lip-balm", "Added because sun, heat, flights, and long outdoor days can dry out lips.", true);
   }
 
@@ -172,6 +180,7 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   if (tripTypes.includes("beach")) {
     addItem("swimsuit", "Added because beach, pool, resort, or coastal plans need swimwear.");
     addItem("sandals", "Added because sandals are useful for beaches, pools, warm casual days, and wet areas.");
+    addItem("lightweight-cover-up", "A lightweight cover-up or overshirt adds quick coverage between the beach, pool, resort, and indoor spaces.", true);
     addItem("beach-bag", "Added to carry sunscreen, water, a towel, documents, and beach extras during coastal or pool days.");
     addItem("reef-safe-sunscreen", "Added because reef-safe sunscreen is a better choice for many beach, reef, and coastal destinations.");
     addItem("water-shoes", "Added for rocky beaches, reef areas, boat days, wet docks, or slippery shorelines.", true);

@@ -43,7 +43,7 @@ export function ChecklistCategory({ category, items, checkedItems, onToggleItem 
                     <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-black text-amber-700 no-underline">Optional</span>
                   ) : null}
                 </span>
-                <span className="mt-1 block text-xs leading-5 text-slate-500">{item.reason}</span>
+                <span className="mt-1 block text-sm leading-6 text-slate-600">{item.reason}</span>
               </span>
             </label>
           );

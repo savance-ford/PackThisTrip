@@ -71,12 +71,12 @@ export const DESTINATIONS: Destination[] = [
     slug: "mexico",
     name: "Mexico",
     region: "North America",
-    climateTags: ["hot", "tropical", "sunny"],
+    climateTags: ["hot", "humid", "tropical", "sunny", "rain"],
     isInternationalDefault: true,
     outletType: ["A", "B"],
     commonActivities: ["beach", "resort", "city", "ruins"],
     walkingHeavy: false,
-    notes: "Sun protection, breathable clothes, and water-friendly items are especially useful for coastal and resort trips."
+    notes: "Conditions vary across Mexico by region and elevation. Coastal and resort trips often favor sun protection, breathable clothes, and water-friendly items, while city itineraries call for comfortable walking shoes."
   },
   {
     slug: "hawaii",

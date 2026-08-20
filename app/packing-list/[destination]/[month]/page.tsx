@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/Button";
+import { DestinationPackingChecklist } from "@/components/DestinationPackingChecklist";
 import { GearRecommendations } from "@/components/GearRecommendations";
-import { TripSummary } from "@/components/TripSummary";
 import { APPROVED_DESTINATION_MONTHS, getClimateProfile } from "@/data/climateProfiles";
-import type { ClimateProfile } from "@/data/climateProfiles";
+import type { ClimateProfile, WearGuidanceSection } from "@/data/climateProfiles";
 import { getDestination } from "@/data/destinations";
-import { CATEGORY_LABELS, CATEGORY_ORDER, generatePackingList } from "@/lib/generatePackingList";
+import { generatePackingList } from "@/lib/generatePackingList";
 import { getDestinationMonthTripConfig } from "@/lib/getDestinationMonthTripConfig";
 import { scorePageQuality } from "@/lib/scorePageQuality";
-import type { Destination, PackingItem, TripConfig, TripType } from "@/lib/types";
+import type { Destination, TripConfig, TripType } from "@/lib/types";
 
 type PageProps = {
   params: Promise<{
@@ -69,14 +70,11 @@ function compactRelatedLinks(tripTypes: TripType[]) {
   return links.filter((link, index) => links.findIndex((item) => item.href === link.href) === index);
 }
 
-function groupedItems(items: PackingItem[]) {
-  return CATEGORY_ORDER.map((category) => ({
-    category,
-    items: items.filter((item) => item.category === category)
-  })).filter((group) => group.items.length > 0);
-}
-
 function buildIntro(tripConfig: TripConfig, climateProfile: ClimateProfile, destination?: Destination) {
+  if (climateProfile.intro) {
+    return climateProfile.intro;
+  }
+
   const displayMonth = pretty(climateProfile.month);
   const details = [
     climateProfile.hotWeather ? "hot-weather clothing" : "clothing that fits the season",
@@ -89,56 +87,67 @@ function buildIntro(tripConfig: TripConfig, climateProfile: ClimateProfile, dest
   return `Use this ${tripConfig.destinationName} ${displayMonth} packing list to balance ${details.join(", ")}. It is built from typical ${displayMonth} conditions, destination notes, and the same generated checklist engine used by PackThisTrip.`;
 }
 
-function buildWeatherFlags(climateProfile: ClimateProfile) {
-  return [
-    { label: "Hot-weather packing", value: climateProfile.hotWeather ? "Yes" : "No" },
-    { label: "Cold-weather gear", value: climateProfile.coldWeather ? "Yes" : "No" },
-    { label: "Rain backup", value: climateProfile.rainExpected ? "Recommended" : "Light backup" }
-  ];
-}
+function buildWhatToWear(tripConfig: TripConfig, climateProfile: ClimateProfile, destination?: Destination): WearGuidanceSection[] {
+  if (climateProfile.wearGuidance) {
+    return climateProfile.wearGuidance;
+  }
 
-function buildWhatToWear(tripConfig: TripConfig, climateProfile: ClimateProfile, destination?: Destination) {
   const displayMonth = pretty(climateProfile.month);
-  const suggestions: string[] = [];
+  const suggestions: WearGuidanceSection[] = [];
 
   if (climateProfile.hotWeather) {
-    suggestions.push(`Pack lightweight breathable shirts for ${tripConfig.destinationName} in ${displayMonth}, plus shorts or lightweight pants that stay comfortable in heat and humidity.`);
+    suggestions.push({
+      heading: "Daytime clothing",
+      body: `Pack lightweight breathable shirts for ${tripConfig.destinationName} in ${displayMonth}, plus shorts or lightweight pants that stay comfortable in warm conditions.`
+    });
   } else if (climateProfile.coldWeather) {
-    suggestions.push(`Build outfits around warm layers, long sleeves, and outerwear that can handle ${displayMonth} conditions in ${tripConfig.destinationName}.`);
+    suggestions.push({
+      heading: "Cold-weather layers",
+      body: `Build outfits around warm layers, long sleeves, and outerwear that can handle ${displayMonth} conditions in ${tripConfig.destinationName}.`
+    });
   } else {
-    suggestions.push(`Use light layers that can handle changing indoor, outdoor, and evening temperatures in ${tripConfig.destinationName}.`);
+    suggestions.push({
+      heading: "Flexible layers",
+      body: `Use light layers that can handle changing indoor, outdoor, and evening temperatures in ${tripConfig.destinationName}.`
+    });
   }
 
   if (tripConfig.tripTypes.includes("beach")) {
-    suggestions.push("Bring a swimsuit and sandals for beach, resort, pool, or boat days.");
+    suggestions.push({ heading: "Beach and pool", body: "Bring a swimsuit, sandals, and light coverage for beach, resort, pool, or boat days." });
   }
 
   if (tripConfig.tripTypes.includes("city") || destination?.walkingHeavy) {
-    suggestions.push("Add comfortable walking shoes for cities, tours, airports, excursions, and long travel days.");
+    suggestions.push({ heading: "Walking days", body: "Add comfortable walking shoes for cities, tours, airports, excursions, and long travel days." });
   }
 
   if (climateProfile.rainExpected) {
-    suggestions.push(`Include a light rain layer or compact umbrella because ${displayMonth} can bring rain in many ${tripConfig.destinationName} destinations.`);
+    suggestions.push({ heading: "Rain backup", body: `Include a light rain layer or compact umbrella because ${displayMonth} can bring rain in ${tripConfig.destinationName}.` });
   }
 
   if (tripConfig.isInternational) {
-    suggestions.push("Keep one outfit practical for travel days, immigration lines, transfers, and hotel check-in.");
+    suggestions.push({ heading: "Travel days", body: "Keep one outfit practical for travel days, immigration lines, transfers, and hotel check-in." });
   }
 
   return suggestions;
 }
 
 function buildWhyDifferent(tripConfig: TripConfig, climateProfile: ClimateProfile, destination?: Destination) {
+  const climateTags = destination?.climateTags ?? [];
+  const sunExpected = climateTags.some((tag) => ["sunny", "hot-summer", "tropical"].includes(tag));
+  const cityOrWalking = tripConfig.tripTypes.includes("city") || destination?.walkingHeavy;
   const reasons = [
-    ...climateProfile.packingNotes,
-    destination?.notes,
-    climateProfile.hotWeather ? "The generated list leans toward breathable clothing, sun protection, and hydration instead of bulky layers." : null,
-    climateProfile.rainExpected ? "Rain protection stays visible because the climate profile marks rain as expected or likely." : null,
-    tripConfig.tripTypes.includes("beach") ? "Beach and swim items are included because the destination-month profile supports beach travel." : null,
-    tripConfig.isInternational ? "Passport, backup documents, confirmations, and adapter items are included because this is treated as an international trip." : null
+    climateProfile.hotWeather ? "Hot-weather clothing is prioritized, with more breathable tops and fewer bulky layers." : null,
+    climateProfile.coldWeather ? "Warm layers and cold-weather protection are included because the monthly climate profile calls for them." : null,
+    sunExpected ? "Sun protection stays prominent for outdoor sightseeing, beach days, and extended daytime exposure." : null,
+    climateProfile.rainExpected ? "Compact rain gear is included because the monthly profile calls for a practical rain backup." : null,
+    tripConfig.tripTypes.includes("beach") ? "Beach and swim gear is included because coastal, resort, or pool travel is relevant to this destination-month profile." : null,
+    cityOrWalking ? "Comfortable walking shoes and a day bag remain useful for sightseeing, transit, tours, and excursions." : null,
+    tripConfig.isInternational ? "Passport, backup documents, confirmations, and destination-appropriate charging gear are considered for international travel." : null,
+    climateProfile.hotWeather && !climateProfile.coldWeather ? "Bulky cold-weather items are intentionally minimized unless the exact itinerary requires them." : null,
+    ...climateProfile.packingNotes
   ].filter(Boolean);
 
-  return Array.from(new Set(reasons)).slice(0, 8);
+  return Array.from(new Set(reasons)).slice(0, 7);
 }
 
 function buildNotToPack(tripConfig: TripConfig, climateProfile: ClimateProfile) {
@@ -156,10 +165,11 @@ function buildNotToPack(tripConfig: TripConfig, climateProfile: ClimateProfile) 
 
   if (tripConfig.luggageType === "carry-on") {
     items.push("Full-size liquids in your carry-on. Use travel-size containers and a TSA liquids bag.");
+    items.push("A separate outfit for every day. Build a compact wardrobe from tops and bottoms that can be worn more than once.");
   }
 
   if (!tripConfig.tripTypes.includes("business")) {
-    items.push("Too many dressy shoes unless you already have formal dinners, events, or resort dress codes planned.");
+    items.push("Multiple bulky pairs of shoes. Start with walking shoes and add sandals or dressier footwear only when the itinerary needs them.");
   }
 
   if (climateProfile.rainExpected) {
@@ -167,6 +177,22 @@ function buildNotToPack(tripConfig: TripConfig, climateProfile: ClimateProfile) 
   }
 
   return items;
+}
+
+function buildPackingTips(tripConfig: TripConfig, climateProfile: ClimateProfile, destination?: Destination) {
+  const cityOrWalking = tripConfig.tripTypes.includes("city") || destination?.walkingHeavy;
+  const sunExpected = destination?.climateTags.some((tag) => ["sunny", "hot-summer", "tropical"].includes(tag));
+  const tips = [
+    climateProfile.hotWeather ? "Build outfits from breathable layers and repeatable lightweight pieces instead of heavy, single-use outfits." : "Build outfits from repeatable layers that match the monthly climate profile.",
+    climateProfile.rainExpected ? "Keep compact rain protection near the top of your day bag during tours and excursions." : null,
+    cityOrWalking ? "Wear proven walking shoes for sightseeing days rather than packing an untested pair for the trip." : null,
+    sunExpected ? "Keep sunglasses, a sun hat, sunscreen, and water easy to reach during daytime plans." : null,
+    tripConfig.luggageType === "carry-on" ? "Use packing cubes or a simple outfit plan to keep the carry-on wardrobe compact." : null,
+    `Check the forecast for your exact ${tripConfig.destinationName} city or region shortly before departure.`,
+    "Adjust the starter list for planned beaches, hikes, resorts, nightlife, formal dining, or other itinerary-specific activities."
+  ].filter(Boolean);
+
+  return Array.from(new Set(tips)).slice(0, 7);
 }
 
 function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, destination?: Destination): Faq[] {
@@ -185,7 +211,7 @@ function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, desti
   return [
     {
       question: `What should I pack for ${destinationName} in ${displayMonth}?`,
-      answer: `Pack ${packingFocus.join(", ")}, plus the basics generated in the checklist.`
+      answer: `Start with ${packingFocus.join(", ")}, plus the everyday basics in the generated checklist. Use the generator to adjust the list for your trip length, luggage, and activities.`
     },
     {
       question: `What should I wear in ${destinationName} in ${displayMonth}?`,
@@ -195,7 +221,9 @@ function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, desti
     },
     {
       question: `Is ${displayMonth} rainy in ${destinationName}?`,
-      answer: `${displayMonth} has a ${climateProfile.rainLikelihood} rain likelihood in this packing profile. Conditions vary by region, but it is smart to plan for possible showers instead of relying on exact live weather.`
+      answer: climateProfile.rainExpected
+        ? `Seasonal showers are possible in ${displayMonth}, but conditions vary by region and elevation. Pack a compact rain backup and check the local forecast before departure.`
+        : `${displayMonth} has a ${climateProfile.rainLikelihood} rain likelihood in this monthly profile. Check the forecast for your exact destination before departure.`
     },
     {
       question: `Do I need a rain jacket for ${destinationName} in ${displayMonth}?`,
@@ -204,29 +232,14 @@ function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, desti
         : "A small rain backup can still be useful, but it is not the main driver of this list."
     },
     {
-      question: `Can I pack carry-on only for ${destinationName} in ${displayMonth}?`,
-      answer: "Yes. This starter list uses a seven-day solo carry-on assumption, so it prioritizes reusable clothing, compact weather gear, travel-size liquids, and essential documents."
-    },
-    {
       question: `What shoes should I pack for ${destinationName} in ${displayMonth}?`,
       answer: `${cityOrWalking ? "Bring comfortable walking shoes for airports, cities, tours, and excursions. " : "Bring comfortable shoes for travel days and activities. "}${tripConfig.tripTypes.includes("beach") ? "Sandals are useful for beach, pool, resort, or boat time." : "Choose shoes that match your planned activities."}`
+    },
+    {
+      question: `Can I pack carry-on only for ${destinationName} in ${displayMonth}?`,
+      answer: "Yes. This starter list uses a seven-day solo carry-on assumption, prioritizing repeatable clothing, compact weather gear, travel-size liquids, and essential documents. Customize it if your itinerary or airline limits differ."
     }
   ];
-}
-
-function buildFaqJsonLd(faqs: Faq[]) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer
-      }
-    }))
-  };
 }
 
 function buildMetadataTitle(tripConfig: TripConfig, climateProfile: ClimateProfile) {
@@ -321,29 +334,38 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
   }
 
   const items = generatePackingList(tripConfig);
-  const groups = groupedItems(items);
   const displayMonth = pretty(climateProfile.month);
   const relatedLinks = compactRelatedLinks(tripConfig.tripTypes);
-  const weatherFlags = buildWeatherFlags(climateProfile);
   const whatToWear = buildWhatToWear(tripConfig, climateProfile, destination);
   const whyDifferent = buildWhyDifferent(tripConfig, climateProfile, destination);
   const notToPack = buildNotToPack(tripConfig, climateProfile);
+  const packingTips = buildPackingTips(tripConfig, climateProfile, destination);
   const faqs = buildFaqs(tripConfig, climateProfile, destination);
-  const faqJsonLd = buildFaqJsonLd(faqs);
 
   return (
     <article className="bg-slate-50">
       <section className="bg-white py-14 md:py-20">
         <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Destination Packing Lists", href: "/packing-list" },
+              {
+                label: `${tripConfig.destinationName} in ${displayMonth}`,
+                href: `/packing-list/${tripConfig.destinationSlug}/${climateProfile.month}`
+              }
+            ]}
+          />
           <p className="text-sm font-bold uppercase tracking-[0.25em] text-slate-500">Destination checklist</p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
+          <h1 className="mt-4 max-w-4xl break-words text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
             What to Pack for {tripConfig.destinationName} in {displayMonth}
           </h1>
           <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
             {buildIntro(tripConfig, climateProfile, destination)}
           </p>
-          <div className="mt-8">
-            <Button href="/packing-list-generator">Customize this packing list</Button>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button href="/packing-list-generator" className="w-full sm:w-auto">Customize this packing list</Button>
+            <Button href="#packing-list" variant="secondary" className="w-full sm:w-auto">View the packing list</Button>
           </div>
         </div>
       </section>
@@ -351,26 +373,44 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
       <section className="py-10 md:py-14">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 md:px-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
           <div className="space-y-8">
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Weather summary</p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{tripConfig.destinationName} in {displayMonth}</h2>
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="destination-at-a-glance">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Monthly trip context</p>
+              <h2 id="destination-at-a-glance" className="mt-2 text-2xl font-black tracking-tight text-slate-950">
+                {tripConfig.destinationName} in {displayMonth} at a Glance
+              </h2>
               <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-                <div className="rounded-xl bg-slate-50 p-3">
-                  <dt className="font-bold text-slate-500">Average temperature</dt>
-                  <dd className="mt-1 text-lg font-black text-slate-950">{climateProfile.avgTempF}F</dd>
+                <div className="min-w-0 rounded-xl bg-slate-50 p-3">
+                  <dt className="font-bold text-slate-500">Typical conditions</dt>
+                  <dd className="mt-1 break-words font-black leading-6 text-slate-950">
+                    {climateProfile.typicalTemperature ?? `${climateProfile.avgTempF}\u00b0F monthly average`}
+                  </dd>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3">
-                  <dt className="font-bold text-slate-500">Rain likelihood</dt>
-                  <dd className="mt-1 text-lg font-black text-slate-950">{pretty(climateProfile.rainLikelihood)}</dd>
+                <div className="min-w-0 rounded-xl bg-slate-50 p-3">
+                  <dt className="font-bold text-slate-500">Rain</dt>
+                  <dd className="mt-1 break-words font-black leading-6 text-slate-950">
+                    {climateProfile.rainSummary ?? `${pretty(climateProfile.rainLikelihood)} likelihood in the monthly profile`}
+                  </dd>
                 </div>
-                {weatherFlags.map((flag) => (
-                  <div key={flag.label} className="rounded-xl bg-slate-50 p-3">
-                    <dt className="font-bold text-slate-500">{flag.label}</dt>
-                    <dd className="mt-1 text-lg font-black text-slate-950">{flag.value}</dd>
+                <div className="min-w-0 rounded-xl bg-slate-50 p-3 sm:col-span-2">
+                  <dt className="font-bold text-slate-500">Packing focus</dt>
+                  <dd className="mt-1 break-words font-black leading-6 text-slate-950">
+                    {climateProfile.packingFocus ?? climateProfile.packingNotes[0]}
+                  </dd>
+                </div>
+                {destination?.climateTags.length ? (
+                  <div className="rounded-xl bg-slate-50 p-3 sm:col-span-2">
+                    <dt className="font-bold text-slate-500">Climate tags</dt>
+                    <dd className="mt-2 flex flex-wrap gap-2">
+                      {destination.climateTags.map((tag) => (
+                        <span key={tag} className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-700 ring-1 ring-slate-200">
+                          {pretty(tag)}
+                        </span>
+                      ))}
+                    </dd>
                   </div>
-                ))}
+                ) : null}
                 <div className="rounded-xl bg-slate-50 p-3 sm:col-span-2">
-                  <dt className="font-bold text-slate-500">Recommended trip types</dt>
+                  <dt className="font-bold text-slate-500">Recommended trip styles</dt>
                   <dd className="mt-2 flex flex-wrap gap-2">
                     {tripConfig.tripTypes.map((tripType) => (
                       <span key={tripType} className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-700 ring-1 ring-slate-200">
@@ -379,68 +419,53 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
                     ))}
                   </dd>
                 </div>
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <dt className="font-bold text-slate-500">Default trip length</dt>
+                  <dd className="mt-1 font-black text-slate-950">{tripConfig.durationDays} days</dd>
+                </div>
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <dt className="font-bold text-slate-500">Default luggage</dt>
+                  <dd className="mt-1 font-black text-slate-950">{pretty(tripConfig.luggageType)}</dd>
+                </div>
               </dl>
               <p className="mt-4 text-sm leading-6 text-slate-600">{climateProfile.weatherSummary}</p>
-              {destination?.notes ? (
-                <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm leading-6 text-amber-900">{destination.notes}</p>
-              ) : null}
+              <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm leading-6 text-amber-950">
+                {climateProfile.forecastNote ?? `This monthly profile is a planning guide, not a live forecast. Check conditions for your exact ${tripConfig.destinationName} itinerary shortly before departure.`}
+              </p>
             </section>
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Clothing plan</p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">What to Wear in {tripConfig.destinationName} in {displayMonth}</h2>
-              <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-                {whatToWear.map((suggestion) => (
-                  <li key={suggestion} className="border-l-2 border-slate-200 pl-3">{suggestion}</li>
-                ))}
-              </ul>
-            </section>
-
-            <TripSummary config={tripConfig} />
-
-            <section>
+            <section id="packing-list" aria-labelledby="packing-list-heading" className="scroll-mt-24">
               <div className="mb-5">
                 <p className="text-sm font-bold uppercase tracking-[0.25em] text-slate-500">Generated checklist</p>
-                <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950">What to pack</h2>
+                <h2 id="packing-list-heading" className="mt-2 text-3xl font-black tracking-tight text-slate-950">
+                  {tripConfig.destinationName} {displayMonth} Packing List
+                </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                  Generated from a seven-day solo carry-on trip assumption, the local climate profile, and the destination activity mix.
+                  Generated from a seven-day solo carry-on assumption, the monthly climate profile, and the destination activity mix. Adjust it for your airline, lodging, personal needs, and exact itinerary.
                 </p>
               </div>
+              <DestinationPackingChecklist
+                items={items}
+                storageKey={`${tripConfig.destinationSlug}-${climateProfile.month}`}
+              />
+            </section>
 
-              <div className="grid gap-5 lg:grid-cols-2">
-                {groups.map(({ category, items: categoryItems }) => (
-                  <section key={category} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                    <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-5 py-4">
-                      <h3 className="font-black text-slate-950">{CATEGORY_LABELS[category]}</h3>
-                      <span className="text-xs font-bold text-slate-500">{categoryItems.length} items</span>
-                    </div>
-                    <ul className="divide-y divide-slate-100">
-                      {categoryItems.map((item) => (
-                        <li key={item.id} className="p-4">
-                          <div className="flex flex-wrap items-center gap-2 text-sm font-bold text-slate-950">
-                            <span>{item.name}</span>
-                            {item.quantity && item.quantity > 1 ? (
-                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-black text-slate-600">Qty {item.quantity}</span>
-                            ) : null}
-                            {item.optional ? (
-                              <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-black text-amber-700">Optional</span>
-                            ) : null}
-                            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-black text-slate-600">{CATEGORY_LABELS[item.category]}</span>
-                          </div>
-                          <p className="mt-1 text-xs leading-5 text-slate-500">{item.reason}</p>
-                        </li>
-                      ))}
-                    </ul>
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Clothing plan</p>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">What to Wear in {tripConfig.destinationName} in {displayMonth}</h2>
+              <div className="mt-5 grid gap-4">
+                {whatToWear.map((section) => (
+                  <section key={section.heading} className="rounded-xl bg-slate-50 p-4">
+                    <h3 className="font-black text-slate-950">{section.heading}</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">{section.body}</p>
                   </section>
                 ))}
               </div>
             </section>
 
-            <GearRecommendations items={items} tripConfig={tripConfig} />
-
             <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Why these items?</p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Why this {tripConfig.destinationName} {displayMonth} packing list is different</h2>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Why This {tripConfig.destinationName} {displayMonth} Packing List Is Different</h2>
               <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
                 {whyDifferent.map((note) => (
                   <li key={note} className="border-l-2 border-slate-200 pl-3">{note}</li>
@@ -459,8 +484,20 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
             </section>
 
             <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Practical planning</p>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{tripConfig.destinationName} in {displayMonth} Packing Tips</h2>
+              <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
+                {packingTips.map((tip) => (
+                  <li key={tip} className="border-l-2 border-slate-200 pl-3">{tip}</li>
+                ))}
+              </ul>
+            </section>
+
+            <GearRecommendations items={items} tripConfig={tripConfig} />
+
+            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">FAQ</p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{tripConfig.destinationName} {displayMonth} Packing Questions</h2>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{tripConfig.destinationName} {displayMonth} Packing FAQs</h2>
               <div className="mt-4 divide-y divide-slate-100">
                 {faqs.map((faq) => (
                   <div key={faq.question} className="py-4 first:pt-0 last:pb-0">
@@ -486,10 +523,6 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
           </aside>
         </div>
       </section>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
     </article>
   );
 }

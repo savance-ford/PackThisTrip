@@ -31,7 +31,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...staticPaths, ...destinationPaths].map((path) => ({
     url: `${baseUrl}${path}`,
-    changeFrequency: path === "/" ? "weekly" : "monthly",
-    priority: path === "/" ? 1 : 0.7
+    changeFrequency: path === "/" ? "weekly" : "monthly"
   }));
 }

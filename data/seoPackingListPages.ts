@@ -40,7 +40,10 @@ const related = {
   weekend: { label: "Weekend Trip Packing List", href: "/weekend-trip-packing-list" },
   winter: { label: "Winter Travel Packing List", href: "/winter-travel-packing-list" },
   summer: { label: "Summer Travel Packing List", href: "/summer-travel-packing-list" },
-  mexicoJuly: { label: "What to pack for Mexico in July", href: "/packing-list/mexico/july" }
+  mexicoJuly: { label: "What to pack for Mexico in July", href: "/packing-list/mexico/july" },
+  mexicoJulyPackingList: { label: "Mexico in July packing list", href: "/packing-list/mexico/july" },
+  packingForMexicoJuly: { label: "Packing for Mexico in July", href: "/packing-list/mexico/july" },
+  mexicoJulyCarryOn: { label: "Carry-on packing for Mexico in July", href: "/packing-list/mexico/july" }
 };
 
 export const seoPackingListPages = {
@@ -55,7 +58,7 @@ export const seoPackingListPages = {
       "Choose clothing pieces that can repeat across travel days, dinners, and sightseeing.",
       "Put documents, medication, chargers, and one change of clothes where they are easy to reach."
     ],
-    relatedLinks: [related.weekend, related.international, related.sevenDay, related.business]
+    relatedLinks: [related.mexicoJulyCarryOn, related.weekend, related.international, related.sevenDay, related.business]
   },
   beachVacationPackingList: {
     title: "Beach Vacation Packing List",
@@ -68,7 +71,7 @@ export const seoPackingListPages = {
       "Use a dedicated beach bag so sunscreen, water, and wet items stay separate from clean clothes.",
       "Bring sun protection even when the forecast looks cloudy; beach exposure adds up quickly."
     ],
-    relatedLinks: [related.mexicoJuly, related.summer, related.family, related.cruise, related.carryOn]
+    relatedLinks: [related.mexicoJulyPackingList, related.summer, related.family, related.cruise, related.carryOn]
   },
   cruisePackingList: {
     title: "Cruise Packing List",
@@ -107,7 +110,7 @@ export const seoPackingListPages = {
       "Check outlet types and voltage before packing electronics that need more than a USB charger.",
       "Build around comfortable shoes; international city trips often include more walking than expected."
     ],
-    relatedLinks: [related.mexicoJuly, related.carryOn, related.sevenDay, related.winter, related.summer]
+    relatedLinks: [related.packingForMexicoJuly, related.carryOn, related.sevenDay, related.winter, related.summer]
   },
   familyVacationPackingList: {
     title: "Family Vacation Packing List",
