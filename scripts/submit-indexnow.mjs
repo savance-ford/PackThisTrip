@@ -105,6 +105,11 @@ if (response.status === 200) {
   process.exit(0);
 }
 
+if (response.status === 202) {
+  console.log("IndexNow accepted the submission; key validation is pending.");
+  process.exit(0);
+}
+
 const responseBody = (await response.text()).trim();
 const usefulError = responseErrors[response.status] ?? "The IndexNow endpoint returned an unexpected response.";
 const bodyDetails = responseBody ? ` Response body: ${responseBody}` : "";
