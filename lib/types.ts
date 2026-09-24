@@ -35,6 +35,10 @@ export interface TripConfig {
   coldWeather: boolean;
   hotWeather: boolean;
   isInternational: boolean;
+  mildWeather?: boolean;
+  coolEvenings?: boolean;
+  layersRecommended?: boolean;
+  variableRegionalClimate?: boolean;
 }
 
 export interface BasePackingItem {

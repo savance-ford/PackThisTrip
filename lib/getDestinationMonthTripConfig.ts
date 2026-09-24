@@ -14,7 +14,7 @@ export function getDestinationMonthTripConfig(destinationSlug: string, month: st
     destinationSlug: destination.slug,
     destinationName: destination.name,
     month: climateProfile.month,
-    durationDays: 7,
+    durationDays: climateProfile.defaultDurationDays ?? 7,
     luggageType: "carry-on",
     travelerType: "solo",
     tripTypes: climateProfile.recommendedTripTypes,
@@ -23,6 +23,10 @@ export function getDestinationMonthTripConfig(destinationSlug: string, month: st
     rainExpected: climateProfile.rainExpected,
     coldWeather: climateProfile.coldWeather,
     hotWeather: climateProfile.hotWeather,
-    isInternational: destination.isInternationalDefault
+    isInternational: destination.isInternationalDefault,
+    mildWeather: climateProfile.mildWeather,
+    coolEvenings: climateProfile.coolEvenings,
+    layersRecommended: climateProfile.layersRecommended,
+    variableRegionalClimate: climateProfile.variableRegionalClimate
   };
 }

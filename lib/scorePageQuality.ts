@@ -4,6 +4,7 @@ import { generatePackingList } from "@/lib/generatePackingList";
 import { getDestinationMonthTripConfig } from "@/lib/getDestinationMonthTripConfig";
 
 const CORE_BASIC_ITEM_IDS = new Set([
+  "phone",
   "phone-charger",
   "toothbrush",
   "toothpaste",
@@ -17,6 +18,7 @@ const CORE_BASIC_ITEM_IDS = new Set([
   "sleepwear",
   "hand-sanitizer",
   "medicine-kit",
+  "personal-medications",
   "headphones",
   "neck-pillow",
   "earplugs",
