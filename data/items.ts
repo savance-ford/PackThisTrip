@@ -16,6 +16,8 @@ export const PACKING_ITEMS: Record<string, BasePackingItem> = {
   "dress-outfit": { id: "dress-outfit", name: "Dress outfit", category: "clothing", tags: ["cruise", "dining", "formal"] },
   "business-outfit": { id: "business-outfit", name: "Business outfit", category: "clothing", tags: ["business", "formal"] },
   "walking-shoes": { id: "walking-shoes", name: "Comfortable walking shoes", category: "clothing", tags: ["city", "walking"] },
+  "casual-shoes": { id: "casual-shoes", name: "Backup casual shoes", category: "clothing", tags: ["city", "long-trip"] },
+  "smart-casual-outfit": { id: "smart-casual-outfit", name: "Smart-casual outfit", category: "clothing", tags: ["city", "dining"] },
   sandals: { id: "sandals", name: "Sandals", category: "clothing", tags: ["beach", "hot"] },
   "lightweight-cover-up": { id: "lightweight-cover-up", name: "Lightweight cover-up", category: "clothing", tags: ["beach", "sun"] },
   "hiking-shoes": { id: "hiking-shoes", name: "Hiking shoes", category: "clothing", tags: ["hiking", "outdoors"] },
@@ -36,6 +38,7 @@ export const PACKING_ITEMS: Record<string, BasePackingItem> = {
   "travel-towel": { id: "travel-towel", name: "Travel towel", category: "toiletries", tags: ["camping", "beach"] },
   "hand-sanitizer": { id: "hand-sanitizer", name: "Hand sanitizer", category: "toiletries", tags: ["health"] },
   "medicine-kit": { id: "medicine-kit", name: "Basic medicine kit", category: "toiletries", tags: ["health", "safety"] },
+  "personal-medications": { id: "personal-medications", name: "Personal medications", category: "toiletries", tags: ["core", "health"] },
 
   // Documents
   id: { id: "id", name: "ID", category: "documents", tags: ["core", "essential"] },
@@ -48,6 +51,7 @@ export const PACKING_ITEMS: Record<string, BasePackingItem> = {
   "document-copies": { id: "document-copies", name: "Copies of important documents", category: "documents", tags: ["international", "backup"] },
 
   // Electronics
+  phone: { id: "phone", name: "Phone", category: "electronics", tags: ["core", "transit"] },
   "phone-charger": { id: "phone-charger", name: "Phone charger", category: "electronics", tags: ["core"] },
   "portable-charger": { id: "portable-charger", name: "Portable charger", category: "electronics", tags: ["city", "theme-park", "transit"] },
   headphones: { id: "headphones", name: "Headphones", category: "electronics", tags: ["transit"] },
@@ -57,6 +61,7 @@ export const PACKING_ITEMS: Record<string, BasePackingItem> = {
   "universal-power-adapter": { id: "universal-power-adapter", name: "Universal power adapter", category: "electronics", tags: ["international"] },
   "europe-plug-adapter": { id: "europe-plug-adapter", name: "Plug adapter for Europe", category: "electronics", tags: ["europe"] },
   "uk-plug-adapter": { id: "uk-plug-adapter", name: "Plug adapter for UK", category: "electronics", tags: ["uk"] },
+  "power-adapter-if-needed": { id: "power-adapter-if-needed", name: "Power adapter (if needed)", category: "electronics", tags: ["international"] },
 
   // Travel gear
   "packing-cubes": { id: "packing-cubes", name: "Packing cubes", category: "travel-gear", tags: ["carry-on", "organization"] },
@@ -65,6 +70,7 @@ export const PACKING_ITEMS: Record<string, BasePackingItem> = {
   "luggage-tag": { id: "luggage-tag", name: "Luggage tag", category: "travel-gear", tags: ["core"] },
   "reusable-water-bottle": { id: "reusable-water-bottle", name: "Reusable water bottle", category: "travel-gear", tags: ["hiking", "theme-park", "hot"] },
   daypack: { id: "daypack", name: "Daypack", category: "travel-gear", tags: ["city", "hiking"] },
+  "reusable-tote": { id: "reusable-tote", name: "Small reusable tote", category: "travel-gear", tags: ["city", "organization"] },
   "neck-pillow": { id: "neck-pillow", name: "Neck pillow", category: "travel-gear", tags: ["transit"] },
   "eye-mask": { id: "eye-mask", name: "Eye mask", category: "travel-gear", tags: ["transit", "sleep"] },
   earplugs: { id: "earplugs", name: "Earplugs", category: "travel-gear", tags: ["sleep", "transit"] },

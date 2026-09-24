@@ -48,6 +48,8 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   const isTropicalOrHumid = destinationTags.some((tag) => ["tropical", "humid", "humid-summer", "jungle"].includes(tag));
   const hasStrongSun = destinationTags.some((tag) => ["sunny", "hot-summer", "tropical"].includes(tag));
   const hasOutdoorRainPlan = tripTypes.some((tripType) => ["disney", "hiking", "camping"].includes(tripType));
+  const cityOrWalking = Boolean(destination?.walkingHeavy || tripTypes.includes("city"));
+  const diningRelevant = Boolean(destination?.commonActivities.some((activity) => ["food", "dining"].includes(activity)));
 
   const addItem = (id: string, reason: string, optional = false, quantity?: number) => {
     const base = PACKING_ITEMS[id];
@@ -76,6 +78,7 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   };
 
   // Core basics
+  addItem("phone", "Essential for navigation, tickets, reservations, translation, and communication while traveling.");
   addItem("phone-charger", "Added because a phone charger is essential for navigation, boarding passes, and communication.");
   addItem("toothbrush", "Added as a daily hygiene essential.");
   addItem("toothpaste", "Added as a daily hygiene essential.");
@@ -86,16 +89,26 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   addItem("luggage-tag", "Added to make bags easier to identify if they are separated or checked.");
   addItem("t-shirts", tripConfig.hotWeather
     ? `Included as versatile lightweight tops for typical hot-weather days during ${tripLabel}.`
-    : "Added as a versatile core clothing item based on your trip length.");
+    : tripConfig.mildWeather
+      ? `Lightweight or medium-weight tops form a repeatable base for mild ${prettyMonth(tripConfig.month)} days.`
+      : "Added as a versatile core clothing item based on your trip length.");
   addItem("pants", tripConfig.hotWeather
     ? "A small number of lightweight pants adds coverage for travel, sightseeing, or dining while keeping a warm-weather wardrobe compact."
     : "Added as reusable bottoms with smart quantity capping instead of one pair per day.");
   addItem("sleepwear", "Added for overnight comfort without overpacking.");
   addItem("hand-sanitizer", "Added as a compact hygiene item for flights, transit, and public spaces.", true);
   addItem("medicine-kit", "Added as a small backup for common travel issues like headaches, stomach discomfort, or minor scrapes.", true);
+  addItem("personal-medications", "Keep required medications accessible, with enough for the trip and reasonable delay time.");
 
   if (tripConfig.durationDays >= 3) {
-    addItem("light-jacket", "Added as a flexible layer for cool planes, evenings, or changing indoor temperatures.", true);
+    addItem("light-jacket", tripConfig.coolEvenings
+      ? `Useful for cooler ${prettyMonth(tripConfig.month)} mornings and evenings without taking up much suitcase space.`
+      : "Added as a flexible layer for cool planes, evenings, or changing indoor temperatures.", true);
+  }
+
+  if (tripConfig.layersRecommended && !tripConfig.coldWeather) {
+    addItem("long-sleeve-shirts", `Useful as a breathable layer when ${tripLabel} shifts between mild days and cooler conditions.`);
+    addItem("sweater-hoodie", "One light sweater or cardigan adds warmth for cooler mornings and evenings without the bulk of a heavy coat.");
   }
 
   // International rules
@@ -115,6 +128,8 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
     addItem("europe-plug-adapter", `Added because ${tripConfig.destinationName} uses European plug types ${destination?.outletType.join("/") || "C/F"}.`);
   } else if (international && destination?.outletType.some((outlet) => !["A", "B"].includes(outlet))) {
     addItem("universal-power-adapter", `Added because ${tripConfig.destinationName} uses outlet types that can differ from common North American A/B plugs.`);
+  } else if (international) {
+    addItem("power-adapter-if-needed", `${tripConfig.destinationName} uses ${destination?.outletType.join("/") || "destination-specific"} outlets; verify plug shape, voltage, and device compatibility before deciding whether an adapter is needed.`, true);
   }
 
   // Luggage rules
@@ -127,15 +142,28 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   }
 
   if (quantities["travel-laundry-detergent"]) {
-    addItem("travel-laundry-detergent", "Added because trips longer than seven days are easier when you can rewear and wash small clothing items.");
+    addItem("travel-laundry-detergent", "Useful on trips longer than seven days if you plan to hand-wash basics or use a laundromat.", true);
+  }
+
+  if (quantities["laundry-bag"]) {
     addItem("laundry-bag", "Added to keep worn clothes separate from clean items on a longer trip.");
   }
 
   // Destination walking note
-  if (destination?.walkingHeavy || tripTypes.includes("city")) {
-    addItem("walking-shoes", destination?.walkingHeavy ? `Added because ${tripConfig.destinationName} commonly involves lots of walking, transit, tours, or uneven surfaces.` : "Added because city trips usually involve long walking days, airports, tours, and sightseeing.");
-    addItem("daypack", "Added to carry sunscreen, water, documents, and daily items during sightseeing or transit-heavy days.", true);
-    addItem("portable-charger", "Added because navigation, photos, translation, and transit apps can drain phone battery during long days.", true);
+  if (cityOrWalking) {
+    addItem("walking-shoes", destination?.walkingHeavy ? `${tripConfig.destinationName} trips often involve long walking and transit days, so comfortable shoes are worth prioritizing.` : "City trips usually involve long walking days, airports, tours, and sightseeing.");
+    addItem("daypack", "Useful for carrying water, documents, a portable battery, and weather protection during long sightseeing days.", !destination?.walkingHeavy);
+    addItem("portable-charger", "Navigation, photos, translation, and transit apps can drain a phone battery during a full day away from your lodging.", !destination?.walkingHeavy);
+    addItem("reusable-water-bottle", "Keeps water handy during long walking, sightseeing, and transit days.", true);
+    addItem("reusable-tote", "A compact reusable tote adds useful space for shopping, snacks, or items picked up during the day.", true);
+
+    if (tripConfig.durationDays >= 8) {
+      addItem("casual-shoes", "An optional second casual pair lets walking shoes dry or rest on a longer trip; skip it if carry-on space is tight.", true);
+    }
+
+    if (diningRelevant) {
+      addItem("smart-casual-outfit", "One slightly nicer outfit can cover dinners or evening plans without adding several single-use pieces.", true);
+    }
   }
 
   // Weather rules
@@ -152,6 +180,10 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   if (tripConfig.rainExpected) {
     addItem("packable-rain-jacket", `Added because ${tripLabel} can bring quick showers or wet travel days, and a compact rain layer keeps plans flexible.`);
     addItem("umbrella", "Added as a compact rain backup for city walks, hotel transfers, and sightseeing when showers pass through.", true);
+
+    if (cityOrWalking) {
+      addItem("walking-shoes", "If the local forecast is wet, choose a pair that can handle rain and slick pavement rather than packing bulky rain boots.");
+    }
 
     if (hasOutdoorRainPlan) {
       addItem("poncho", "Added because theme parks, hiking, camping, or other outdoor-heavy plans are easier with quick rain coverage.", true);

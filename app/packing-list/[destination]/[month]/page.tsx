@@ -136,6 +136,7 @@ function buildWhyDifferent(tripConfig: TripConfig, climateProfile: ClimateProfil
   const sunExpected = climateTags.some((tag) => ["sunny", "hot-summer", "tropical"].includes(tag));
   const cityOrWalking = tripConfig.tripTypes.includes("city") || destination?.walkingHeavy;
   const reasons = [
+    ...climateProfile.packingNotes,
     climateProfile.hotWeather ? "Hot-weather clothing is prioritized, with more breathable tops and fewer bulky layers." : null,
     climateProfile.coldWeather ? "Warm layers and cold-weather protection are included because the monthly climate profile calls for them." : null,
     sunExpected ? "Sun protection stays prominent for outdoor sightseeing, beach days, and extended daytime exposure." : null,
@@ -143,8 +144,7 @@ function buildWhyDifferent(tripConfig: TripConfig, climateProfile: ClimateProfil
     tripConfig.tripTypes.includes("beach") ? "Beach and swim gear is included because coastal, resort, or pool travel is relevant to this destination-month profile." : null,
     cityOrWalking ? "Comfortable walking shoes and a day bag remain useful for sightseeing, transit, tours, and excursions." : null,
     tripConfig.isInternational ? "Passport, backup documents, confirmations, and destination-appropriate charging gear are considered for international travel." : null,
-    climateProfile.hotWeather && !climateProfile.coldWeather ? "Bulky cold-weather items are intentionally minimized unless the exact itinerary requires them." : null,
-    ...climateProfile.packingNotes
+    climateProfile.hotWeather && !climateProfile.coldWeather ? "Bulky cold-weather items are intentionally minimized unless the exact itinerary requires them." : null
   ].filter(Boolean);
 
   return Array.from(new Set(reasons)).slice(0, 7);
@@ -237,7 +237,7 @@ function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, desti
     },
     {
       question: `Can I pack carry-on only for ${destinationName} in ${displayMonth}?`,
-      answer: "Yes. This starter list uses a seven-day solo carry-on assumption, prioritizing repeatable clothing, compact weather gear, travel-size liquids, and essential documents. Customize it if your itinerary or airline limits differ."
+      answer: `Yes. This starter list uses a ${tripConfig.durationDays}-day solo carry-on assumption, prioritizing repeatable clothing, compact weather gear, travel-size liquids, and essential documents. Customize it if your itinerary or airline limits differ.`
     }
   ];
 }
@@ -441,7 +441,7 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
                   {tripConfig.destinationName} {displayMonth} Packing List
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                  Generated from a seven-day solo carry-on assumption, the monthly climate profile, and the destination activity mix. Adjust it for your airline, lodging, personal needs, and exact itinerary.
+                  Generated from a {tripConfig.durationDays}-day solo carry-on assumption, the monthly climate profile, and the destination activity mix. Adjust it for your airline, lodging, personal needs, and exact itinerary.
                 </p>
               </div>
               <DestinationPackingChecklist

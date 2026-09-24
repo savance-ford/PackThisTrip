@@ -10,6 +10,7 @@ export type WearGuidanceSection = {
 export type ClimateProfile = {
   destinationSlug: string;
   month: string;
+  defaultDurationDays?: number;
   avgTempF?: number;
   typicalTemperature?: string;
   intro?: string;
@@ -26,6 +27,10 @@ export type ClimateProfile = {
   hotWeather: boolean;
   coldWeather: boolean;
   rainExpected: boolean;
+  mildWeather?: boolean;
+  coolEvenings?: boolean;
+  layersRecommended?: boolean;
+  variableRegionalClimate?: boolean;
 };
 
 export const APPROVED_DESTINATION_MONTHS = [
@@ -77,18 +82,55 @@ export const CLIMATE_PROFILES: ClimateProfile[] = [
   {
     destinationSlug: "japan",
     month: "october",
-    avgTempF: 64,
-    weatherSummary: "October in Japan is generally mild and comfortable, with cooler evenings, city walking, and occasional rain depending on the region.",
+    defaultDurationDays: 10,
+    typicalTemperature: "Mild in much of central Japan; cooler farther north and at elevation",
+    intro: "This Japan October packing list uses a 10-day carry-on trip as a practical starting point for many 10- to 14-day itineraries. Light layers, comfortable walking shoes, compact rain protection, and international travel essentials suit many fall trips, but Japan's regional range matters: northern and mountain stops can be much cooler than central cities, while southern areas may stay relatively warm.",
+    rainSummary: "Rain is possible; pack light protection and check each stop's forecast",
+    packingFocus: "Flexible fall layers, proven walking shoes, compact rain gear, and transit-ready essentials",
+    forecastNote: "Japan's October conditions vary by latitude and elevation. Check each city and day-trip forecast shortly before departure, and pack for the coolest stop on a multi-region itinerary.",
+    wearGuidance: [
+      {
+        heading: "Daytime layers",
+        body: "In much of central Japan, build daytime outfits from lightweight or medium-weight tops with comfortable pants or trousers. Breathable pieces that can be repeated are more useful than a separate outfit for every day."
+      },
+      {
+        heading: "Cooler mornings and evenings",
+        body: "Keep a light sweater or cardigan and a light jacket available for cooler starts, evenings, air-conditioned transit, and temperature changes between indoor and outdoor stops."
+      },
+      {
+        heading: "Walking and transit days",
+        body: "Wear broken-in walking shoes for stations, neighborhoods, temples, museums, and full sightseeing days. A small day bag keeps a phone battery, water, documents, and a compact rain layer within reach."
+      },
+      {
+        heading: "Rain backup",
+        body: "A packable rain layer or compact umbrella is usually enough for an urban itinerary. Check the local forecast before deciding whether water-resistant footwear is worth the luggage space."
+      },
+      {
+        heading: "Regional and mountain itineraries",
+        body: "Northern Japan and higher elevations can need warmer layers, while Kyushu and Okinawa may remain warmer. If the trip crosses regions, plan the layer system around the coolest destination rather than packing one bulky coat."
+      }
+    ],
+    weatherSummary: "October is autumn in Japan. Much of central Japan is often mild, mornings and evenings can feel cooler, rain remains possible, and conditions become cooler in northern or higher-elevation areas while southern Japan can stay warmer.",
     rainLikelihood: "medium",
     recommendedTripTypes: ["city", "international"],
     packingNotes: [
-      "Mild days and cooler evenings make light layers more useful than bulky cold-weather gear.",
-      "Comfortable walking shoes are important for transit, temples, stairs, and full sightseeing days.",
-      "Rain is possible, so a compact rain layer helps without taking much carry-on space."
+      "Northern Japan, including Hokkaido and parts of Tohoku, can be notably cooler than central-city itineraries in October.",
+      "Southern destinations such as Kyushu and Okinawa may remain warmer, so keep the base wardrobe breathable and adaptable.",
+      "Layering a light sweater or cardigan under a light jacket is more flexible than relying on one heavy coat for a typical central-Japan itinerary.",
+      "Japan trips often involve long walking and transit days, making broken-in comfortable shoes a higher priority than extra outfits.",
+      "A compact umbrella or lightweight rain layer is easy to carry during sightseeing when October rain develops.",
+      "Mountain and high-elevation day trips can require warmer clothing than nearby cities.",
+      "For a multi-region itinerary, pack for the coolest destination and use removable layers elsewhere."
     ],
+    metadataTitle: "What to Pack for Japan in October: Fall Packing List",
+    metadataDescription: "Plan what to pack for Japan in October with fall layers, walking shoes, rain gear, travel essentials, and practical regional weather guidance.",
     hotWeather: false,
     coldWeather: false,
-    rainExpected: true
+    rainExpected: true,
+    mildWeather: true,
+    coolEvenings: true,
+    layersRecommended: true,
+    variableRegionalClimate: true
   },
   {
     destinationSlug: "london",
