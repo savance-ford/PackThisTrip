@@ -6,7 +6,7 @@ import { Button } from "@/components/Button";
 import { DestinationPackingChecklist } from "@/components/DestinationPackingChecklist";
 import { GearRecommendations } from "@/components/GearRecommendations";
 import { APPROVED_DESTINATION_MONTHS, getClimateProfile } from "@/data/climateProfiles";
-import type { ClimateProfile, WearGuidanceSection } from "@/data/climateProfiles";
+import type { ClimateProfile, PackingFaq, PackingGuidanceSection, WearGuidanceSection } from "@/data/climateProfiles";
 import { getDestination } from "@/data/destinations";
 import { generatePackingList } from "@/lib/generatePackingList";
 import { getDestinationMonthTripConfig } from "@/lib/getDestinationMonthTripConfig";
@@ -18,11 +18,6 @@ type PageProps = {
     destination: string;
     month: string;
   }>;
-};
-
-type Faq = {
-  question: string;
-  answer: string;
 };
 
 export const dynamicParams = false;
@@ -151,6 +146,10 @@ function buildWhyDifferent(tripConfig: TripConfig, climateProfile: ClimateProfil
 }
 
 function buildNotToPack(tripConfig: TripConfig, climateProfile: ClimateProfile) {
+  if (climateProfile.notToPack) {
+    return climateProfile.notToPack;
+  }
+
   const displayMonth = pretty(climateProfile.month);
   const items: string[] = [];
 
@@ -180,6 +179,10 @@ function buildNotToPack(tripConfig: TripConfig, climateProfile: ClimateProfile) 
 }
 
 function buildPackingTips(tripConfig: TripConfig, climateProfile: ClimateProfile, destination?: Destination) {
+  if (climateProfile.packingTips) {
+    return climateProfile.packingTips;
+  }
+
   const cityOrWalking = tripConfig.tripTypes.includes("city") || destination?.walkingHeavy;
   const sunExpected = destination?.climateTags.some((tag) => ["sunny", "hot-summer", "tropical"].includes(tag));
   const tips = [
@@ -195,7 +198,11 @@ function buildPackingTips(tripConfig: TripConfig, climateProfile: ClimateProfile
   return Array.from(new Set(tips)).slice(0, 7);
 }
 
-function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, destination?: Destination): Faq[] {
+function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, destination?: Destination): PackingFaq[] {
+  if (climateProfile.faqs) {
+    return climateProfile.faqs;
+  }
+
   const displayMonth = pretty(climateProfile.month);
   const destinationName = tripConfig.destinationName;
   const cityOrWalking = tripConfig.tripTypes.includes("city") || destination?.walkingHeavy;
@@ -277,6 +284,37 @@ function buildMetadataDescription(tripConfig: TripConfig, climateProfile: Climat
   ].filter(Boolean);
 
   return `Build a smart packing list for ${tripConfig.destinationName} in ${displayMonth} with ${details.join(", ")}.`;
+}
+
+function PackingGuidanceCard({
+  eyebrow,
+  section
+}: {
+  eyebrow: string;
+  section: PackingGuidanceSection;
+}) {
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">{eyebrow}</p>
+      <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{section.heading}</h2>
+      <p className="mt-4 text-sm leading-6 text-slate-600">{section.body}</p>
+      {section.points?.length ? (
+        <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
+          {section.points.map((point) => (
+            <li key={point} className="border-l-2 border-slate-200 pl-3">{point}</li>
+          ))}
+        </ul>
+      ) : null}
+      {section.relatedLink ? (
+        <Link
+          href={section.relatedLink.href}
+          className="mt-5 inline-flex min-h-11 items-center rounded-lg font-bold text-slate-950 underline decoration-slate-300 underline-offset-4 transition hover:decoration-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+        >
+          {section.relatedLink.label}
+        </Link>
+      ) : null}
+    </section>
+  );
 }
 
 export function generateStaticParams() {
@@ -376,7 +414,7 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="destination-at-a-glance">
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Monthly trip context</p>
               <h2 id="destination-at-a-glance" className="mt-2 text-2xl font-black tracking-tight text-slate-950">
-                {tripConfig.destinationName} in {displayMonth} at a Glance
+                {climateProfile.weatherHeading ?? `${tripConfig.destinationName} in ${displayMonth} at a Glance`}
               </h2>
               <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
                 <div className="min-w-0 rounded-xl bg-slate-50 p-3">
@@ -397,7 +435,7 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
                     {climateProfile.packingFocus ?? climateProfile.packingNotes[0]}
                   </dd>
                 </div>
-                {destination?.climateTags.length ? (
+                {!climateProfile.regionalGuidance?.length && destination?.climateTags.length ? (
                   <div className="rounded-xl bg-slate-50 p-3 sm:col-span-2">
                     <dt className="font-bold text-slate-500">Climate tags</dt>
                     <dd className="mt-2 flex flex-wrap gap-2">
@@ -409,16 +447,18 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
                     </dd>
                   </div>
                 ) : null}
-                <div className="rounded-xl bg-slate-50 p-3 sm:col-span-2">
-                  <dt className="font-bold text-slate-500">Recommended trip styles</dt>
-                  <dd className="mt-2 flex flex-wrap gap-2">
-                    {tripConfig.tripTypes.map((tripType) => (
-                      <span key={tripType} className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-700 ring-1 ring-slate-200">
-                        {pretty(tripType)}
-                      </span>
-                    ))}
-                  </dd>
-                </div>
+                {!climateProfile.regionalGuidance?.length ? (
+                  <div className="rounded-xl bg-slate-50 p-3 sm:col-span-2">
+                    <dt className="font-bold text-slate-500">Recommended trip styles</dt>
+                    <dd className="mt-2 flex flex-wrap gap-2">
+                      {tripConfig.tripTypes.map((tripType) => (
+                        <span key={tripType} className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-700 ring-1 ring-slate-200">
+                          {pretty(tripType)}
+                        </span>
+                      ))}
+                    </dd>
+                  </div>
+                ) : null}
                 <div className="rounded-xl bg-slate-50 p-3">
                   <dt className="font-bold text-slate-500">Default trip length</dt>
                   <dd className="mt-1 font-black text-slate-950">{tripConfig.durationDays} days</dd>
@@ -429,6 +469,16 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
                 </div>
               </dl>
               <p className="mt-4 text-sm leading-6 text-slate-600">{climateProfile.weatherSummary}</p>
+              {climateProfile.regionalGuidance?.length ? (
+                <div className="mt-5 grid gap-3 md:grid-cols-3" aria-label={`${tripConfig.destinationName} regional packing differences`}>
+                  {climateProfile.regionalGuidance.map((region) => (
+                    <section key={region.heading} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                      <h3 className="text-sm font-black text-slate-950">{region.heading}</h3>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">{region.summary}</p>
+                    </section>
+                  ))}
+                </div>
+              ) : null}
               <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm leading-6 text-amber-950">
                 {climateProfile.forecastNote ?? `This monthly profile is a planning guide, not a live forecast. Check conditions for your exact ${tripConfig.destinationName} itinerary shortly before departure.`}
               </p>
@@ -441,8 +491,14 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
                   {tripConfig.destinationName} {displayMonth} Packing List
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                  Generated from a {tripConfig.durationDays}-day solo carry-on assumption, the monthly climate profile, and the destination activity mix. Adjust it for your airline, lodging, personal needs, and exact itinerary.
+                  {climateProfile.checklistIntro ?? `Generated from a ${tripConfig.durationDays}-day solo carry-on assumption, the monthly climate profile, and the destination activity mix. Adjust it for your airline, lodging, personal needs, and exact itinerary.`}
                 </p>
+                <div className="mt-4 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm font-semibold leading-6 text-slate-700">Need different trip assumptions?</p>
+                  <Button href="/packing-list-generator" variant="secondary" className="w-full shrink-0 sm:w-auto">
+                    Customize trip and quantities
+                  </Button>
+                </div>
               </div>
               <DestinationPackingChecklist
                 items={items}
@@ -463,15 +519,25 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
               </div>
             </section>
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Why these items?</p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Why This {tripConfig.destinationName} {displayMonth} Packing List Is Different</h2>
-              <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-                {whyDifferent.map((note) => (
-                  <li key={note} className="border-l-2 border-slate-200 pl-3">{note}</li>
-                ))}
-              </ul>
-            </section>
+            {climateProfile.footwearGuidance ? (
+              <PackingGuidanceCard eyebrow="Walking comfort" section={climateProfile.footwearGuidance} />
+            ) : null}
+
+            {climateProfile.carryOnGuidance ? (
+              <PackingGuidanceCard eyebrow="Packing light" section={climateProfile.carryOnGuidance} />
+            ) : null}
+
+            {climateProfile.showWhyDifferent !== false ? (
+              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Why these items?</p>
+                <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Why This {tripConfig.destinationName} {displayMonth} Packing List Is Different</h2>
+                <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
+                  {whyDifferent.map((note) => (
+                    <li key={note} className="border-l-2 border-slate-200 pl-3">{note}</li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
 
             <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Pack smarter</p>
