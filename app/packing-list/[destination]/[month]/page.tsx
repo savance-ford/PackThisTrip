@@ -350,7 +350,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       url: canonical,
       siteName: "PackThisTrip",
+      images: [
+        {
+          url: "/og-image.svg",
+          width: 1200,
+          height: 630,
+          alt: `${tripConfig.destinationName} ${pretty(climateProfile.month)} packing list`
+        }
+      ],
       type: "website"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-image.svg"]
     }
   };
 }

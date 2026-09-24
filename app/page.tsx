@@ -39,7 +39,7 @@ const features = [
   }
 ];
 
-const popularPackingLists = [
+const featuredPackingLists = [
   {
     title: "Mexico in July",
     href: "/packing-list/mexico/july",
@@ -102,11 +102,11 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-4 md:px-6">
           <div className="mb-10 max-w-2xl">
             <p className="text-sm font-bold uppercase tracking-[0.25em] text-slate-500">Start faster</p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">Popular Packing Lists</h2>
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">Featured Packing Lists</h2>
             <p className="mt-3 text-slate-600">Start with a weather-aware checklist, then customize it for your exact trip.</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {popularPackingLists.map((list) => (
+            {featuredPackingLists.map((list) => (
               <Link
                 key={list.href}
                 href={list.href}

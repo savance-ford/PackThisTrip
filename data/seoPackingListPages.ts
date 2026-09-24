@@ -40,6 +40,8 @@ const related = {
   weekend: { label: "Weekend Trip Packing List", href: "/weekend-trip-packing-list" },
   winter: { label: "Winter Travel Packing List", href: "/winter-travel-packing-list" },
   summer: { label: "Summer Travel Packing List", href: "/summer-travel-packing-list" },
+  japanOctober: { label: "What to pack for Japan in October", href: "/packing-list/japan/october" },
+  japanOctoberCarryOn: { label: "Carry-on planning for Japan in October", href: "/packing-list/japan/october" },
   mexicoJuly: { label: "What to pack for Mexico in July", href: "/packing-list/mexico/july" },
   mexicoJulyPackingList: { label: "Mexico in July packing list", href: "/packing-list/mexico/july" },
   packingForMexicoJuly: { label: "Packing for Mexico in July", href: "/packing-list/mexico/july" },
@@ -58,7 +60,7 @@ export const seoPackingListPages = {
       "Choose clothing pieces that can repeat across travel days, dinners, and sightseeing.",
       "Put documents, medication, chargers, and one change of clothes where they are easy to reach."
     ],
-    relatedLinks: [related.mexicoJulyCarryOn, related.weekend, related.international, related.sevenDay, related.business]
+    relatedLinks: [related.japanOctoberCarryOn, related.weekend, related.international, related.sevenDay, related.business]
   },
   beachVacationPackingList: {
     title: "Beach Vacation Packing List",
@@ -110,7 +112,7 @@ export const seoPackingListPages = {
       "Check outlet types and voltage before packing electronics that need more than a USB charger.",
       "Build around comfortable shoes; international city trips often include more walking than expected."
     ],
-    relatedLinks: [related.packingForMexicoJuly, related.carryOn, related.sevenDay, related.winter, related.summer]
+    relatedLinks: [related.japanOctober, related.carryOn, related.sevenDay, related.winter, related.summer]
   },
   familyVacationPackingList: {
     title: "Family Vacation Packing List",
