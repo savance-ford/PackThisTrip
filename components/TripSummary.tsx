@@ -16,8 +16,9 @@ export function TripSummary({ config }: TripSummaryProps) {
     pretty(config.travelerType),
     config.hasLaundry ? "Laundry access" : "No laundry access",
     config.packLight ? "Pack light" : "Standard packing",
-    config.rainExpected ? "Rain expected" : null,
+    config.rainExpected || config.rainPossible ? "Rain possible / expected" : null,
     config.coldWeather ? "Cold weather" : null,
+    config.coolWeather ? "Cool weather" : null,
     config.hotWeather ? "Hot weather" : null
   ].filter(Boolean) as string[];
 

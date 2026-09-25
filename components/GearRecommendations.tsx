@@ -21,7 +21,7 @@ function getContextTags(items: PackingItem[], tripConfig: TripConfig) {
 
   if (tripConfig.hotWeather) tags.add("hot");
   if (tripConfig.coldWeather) tags.add("cold");
-  if (tripConfig.rainExpected) tags.add("rain");
+  if (tripConfig.rainExpected || tripConfig.rainPossible) tags.add("rain");
   if (tripConfig.isInternational) tags.add("international");
   if (tripConfig.durationDays >= 7) tags.add("long-trip");
   if (tripConfig.hasLaundry) tags.add("laundry");
@@ -31,8 +31,10 @@ function getContextTags(items: PackingItem[], tripConfig: TripConfig) {
 
 export function getGearRecommendations(items: PackingItem[], tripConfig: TripConfig) {
   const contextTags = getContextTags(items, tripConfig);
+  const hasEverydayRainOuterLayer = items.some((item) => item.id === "weather-resistant-jacket");
 
   return GEAR_RECOMMENDATIONS
+    .filter((recommendation) => !(hasEverydayRainOuterLayer && recommendation.id === "packable-rain-jacket"))
     .map((recommendation) => ({
       recommendation,
       score: recommendation.recommendedForTags.filter((tag) => contextTags.has(tag)).length

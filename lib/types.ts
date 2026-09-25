@@ -36,7 +36,11 @@ export interface TripConfig {
   hotWeather: boolean;
   isInternational: boolean;
   mildWeather?: boolean;
+  coolWeather?: boolean;
   coolEvenings?: boolean;
+  rainPossible?: boolean;
+  dampWeather?: boolean;
+  windPossible?: boolean;
   layersRecommended?: boolean;
   variableRegionalClimate?: boolean;
 }

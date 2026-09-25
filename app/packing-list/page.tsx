@@ -25,7 +25,7 @@ export default function DestinationPackingListsPage() {
       href: `/packing-list/${item.destination}/${item.month}`
     };
   });
-  const featuredPage = pages.find((page) => page.destination === "mexico" && page.month === "july");
+  const featuredPage = pages.find((page) => page.destination === "london" && page.month === "november");
   const otherPages = pages.filter((page) => page.href !== featuredPage?.href);
 
   return (
@@ -42,7 +42,7 @@ export default function DestinationPackingListsPage() {
         {featuredPage ? (
           <Link
             href={featuredPage.href}
-            className="mt-10 block rounded-2xl border border-slate-300 bg-white p-6 shadow-sm transition hover:border-slate-400 hover:shadow-md"
+            className="mt-10 block rounded-2xl border border-slate-300 bg-white p-6 shadow-sm transition hover:border-slate-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
           >
             <p className="w-fit rounded-full bg-amber-50 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-amber-700">Featured checklist</p>
             <h2 className="mt-4 text-2xl font-black tracking-tight text-slate-950">What to pack for {featuredPage.destinationName} in {pretty(featuredPage.month)}</h2>
@@ -57,7 +57,7 @@ export default function DestinationPackingListsPage() {
             <Link
               key={page.href}
               href={page.href}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
             >
               <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{pretty(page.month)}</p>
               <h2 className="mt-2 text-xl font-black tracking-tight text-slate-950">What to Pack for {page.destinationName} in {pretty(page.month)}</h2>

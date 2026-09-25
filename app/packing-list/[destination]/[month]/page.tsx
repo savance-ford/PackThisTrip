@@ -26,6 +26,10 @@ function pretty(value: string) {
   return value.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function hasRainRisk(climateProfile: ClimateProfile) {
+  return climateProfile.rainExpected || climateProfile.rainPossible;
+}
+
 function relatedTripTypeLinks(tripTypes: TripType[]) {
   const links = [];
 
@@ -52,13 +56,19 @@ function relatedTripTypeLinks(tripTypes: TripType[]) {
   return links.slice(0, 2);
 }
 
-function compactRelatedLinks(tripTypes: TripType[]) {
+function compactRelatedLinks(tripTypes: TripType[], climateProfile: ClimateProfile) {
+  const seasonalLink = climateProfile.hotWeather
+    ? { label: "Summer Travel Packing List", href: "/summer-travel-packing-list" }
+    : climateProfile.coldWeather || climateProfile.coolWeather
+      ? { label: "Winter Travel Packing List", href: "/winter-travel-packing-list" }
+      : null;
   const links = [
     { label: "Packing List Generator", href: "/packing-list-generator" },
     { label: "Carry-On Packing List", href: "/carry-on-packing-list" },
     { label: "International Travel Packing List", href: "/international-travel-packing-list" },
     ...relatedTripTypeLinks(tripTypes),
-    { label: "Summer Travel Packing List", href: "/summer-travel-packing-list" },
+    ...(climateProfile.relatedPackingLists ?? []),
+    ...(seasonalLink && !climateProfile.relatedPackingLists?.length ? [seasonalLink] : []),
     { label: "All Destination Packing Lists", href: "/packing-list" }
   ];
 
@@ -73,7 +83,7 @@ function buildIntro(tripConfig: TripConfig, climateProfile: ClimateProfile, dest
   const displayMonth = pretty(climateProfile.month);
   const details = [
     climateProfile.hotWeather ? "hot-weather clothing" : "clothing that fits the season",
-    climateProfile.rainExpected ? "rain backup" : "weather backup",
+    hasRainRisk(climateProfile) ? "rain backup" : "weather backup",
     tripConfig.tripTypes.includes("beach") ? "beach and swim gear" : null,
     tripConfig.tripTypes.includes("city") || destination?.walkingHeavy ? "comfortable shoes for walking days" : null,
     tripConfig.isInternational ? "international documents" : null
@@ -115,7 +125,7 @@ function buildWhatToWear(tripConfig: TripConfig, climateProfile: ClimateProfile,
     suggestions.push({ heading: "Walking days", body: "Add comfortable walking shoes for cities, tours, airports, excursions, and long travel days." });
   }
 
-  if (climateProfile.rainExpected) {
+  if (hasRainRisk(climateProfile)) {
     suggestions.push({ heading: "Rain backup", body: `Include a light rain layer or compact umbrella because ${displayMonth} can bring rain in ${tripConfig.destinationName}.` });
   }
 
@@ -135,7 +145,7 @@ function buildWhyDifferent(tripConfig: TripConfig, climateProfile: ClimateProfil
     climateProfile.hotWeather ? "Hot-weather clothing is prioritized, with more breathable tops and fewer bulky layers." : null,
     climateProfile.coldWeather ? "Warm layers and cold-weather protection are included because the monthly climate profile calls for them." : null,
     sunExpected ? "Sun protection stays prominent for outdoor sightseeing, beach days, and extended daytime exposure." : null,
-    climateProfile.rainExpected ? "Compact rain gear is included because the monthly profile calls for a practical rain backup." : null,
+    hasRainRisk(climateProfile) ? "Compact rain gear is included because the monthly profile calls for a practical rain backup." : null,
     tripConfig.tripTypes.includes("beach") ? "Beach and swim gear is included because coastal, resort, or pool travel is relevant to this destination-month profile." : null,
     cityOrWalking ? "Comfortable walking shoes and a day bag remain useful for sightseeing, transit, tours, and excursions." : null,
     tripConfig.isInternational ? "Passport, backup documents, confirmations, and destination-appropriate charging gear are considered for international travel." : null,
@@ -171,7 +181,7 @@ function buildNotToPack(tripConfig: TripConfig, climateProfile: ClimateProfile) 
     items.push("Multiple bulky pairs of shoes. Start with walking shoes and add sandals or dressier footwear only when the itinerary needs them.");
   }
 
-  if (climateProfile.rainExpected) {
+  if (hasRainRisk(climateProfile)) {
     items.push(`A rain plan that only works if the forecast is dry. ${displayMonth} can still bring showers in many areas.`);
   }
 
@@ -187,7 +197,7 @@ function buildPackingTips(tripConfig: TripConfig, climateProfile: ClimateProfile
   const sunExpected = destination?.climateTags.some((tag) => ["sunny", "hot-summer", "tropical"].includes(tag));
   const tips = [
     climateProfile.hotWeather ? "Build outfits from breathable layers and repeatable lightweight pieces instead of heavy, single-use outfits." : "Build outfits from repeatable layers that match the monthly climate profile.",
-    climateProfile.rainExpected ? "Keep compact rain protection near the top of your day bag during tours and excursions." : null,
+    hasRainRisk(climateProfile) ? "Keep compact rain protection near the top of your day bag during tours and excursions." : null,
     cityOrWalking ? "Wear proven walking shoes for sightseeing days rather than packing an untested pair for the trip." : null,
     sunExpected ? "Keep sunglasses, a sun hat, sunscreen, and water easy to reach during daytime plans." : null,
     tripConfig.luggageType === "carry-on" ? "Use packing cubes or a simple outfit plan to keep the carry-on wardrobe compact." : null,
@@ -210,7 +220,7 @@ function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, desti
     climateProfile.hotWeather ? "breathable clothing and sun protection" : null,
     climateProfile.coldWeather ? "warm layers and cold-weather accessories" : null,
     !climateProfile.hotWeather && !climateProfile.coldWeather ? "season-appropriate layers" : null,
-    climateProfile.rainExpected ? "light rain gear" : null,
+    hasRainRisk(climateProfile) ? "light rain gear" : null,
     tripConfig.tripTypes.includes("beach") ? "swim and beach items" : null,
     tripConfig.isInternational ? "passport and travel documents" : null
   ].filter(Boolean);
@@ -228,13 +238,13 @@ function buildFaqs(tripConfig: TripConfig, climateProfile: ClimateProfile, desti
     },
     {
       question: `Is ${displayMonth} rainy in ${destinationName}?`,
-      answer: climateProfile.rainExpected
+      answer: hasRainRisk(climateProfile)
         ? `Seasonal showers are possible in ${displayMonth}, but conditions vary by region and elevation. Pack a compact rain backup and check the local forecast before departure.`
         : `${displayMonth} has a ${climateProfile.rainLikelihood} rain likelihood in this monthly profile. Check the forecast for your exact destination before departure.`
     },
     {
       question: `Do I need a rain jacket for ${destinationName} in ${displayMonth}?`,
-      answer: climateProfile.rainExpected
+      answer: hasRainRisk(climateProfile)
         ? "A packable rain jacket or compact umbrella is a practical backup, especially for afternoon showers, tours, and transit days."
         : "A small rain backup can still be useful, but it is not the main driver of this list."
     },
@@ -277,7 +287,7 @@ function buildMetadataDescription(tripConfig: TripConfig, climateProfile: Climat
   const details = [
     climateProfile.hotWeather ? "hot-weather clothing" : null,
     climateProfile.coldWeather ? "cold-weather layers" : null,
-    climateProfile.rainExpected ? "rain gear" : null,
+    hasRainRisk(climateProfile) ? "rain gear" : null,
     tripConfig.tripTypes.includes("beach") ? "beach items" : null,
     tripConfig.isInternational ? "travel documents" : null,
     "carry-on essentials"
@@ -351,6 +361,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: canonical,
       siteName: "PackThisTrip",
       type: "website"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-image.svg"]
     }
   };
 }
@@ -373,7 +389,7 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
 
   const items = generatePackingList(tripConfig);
   const displayMonth = pretty(climateProfile.month);
-  const relatedLinks = compactRelatedLinks(tripConfig.tripTypes);
+  const relatedLinks = compactRelatedLinks(tripConfig.tripTypes, climateProfile);
   const whatToWear = buildWhatToWear(tripConfig, climateProfile, destination);
   const whyDifferent = buildWhyDifferent(tripConfig, climateProfile, destination);
   const notToPack = buildNotToPack(tripConfig, climateProfile);
@@ -523,8 +539,20 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
               <PackingGuidanceCard eyebrow="Walking comfort" section={climateProfile.footwearGuidance} />
             ) : null}
 
+            {climateProfile.rainGuidance ? (
+              <PackingGuidanceCard eyebrow="Rain plan" section={climateProfile.rainGuidance} />
+            ) : null}
+
             {climateProfile.carryOnGuidance ? (
               <PackingGuidanceCard eyebrow="Packing light" section={climateProfile.carryOnGuidance} />
+            ) : null}
+
+            {climateProfile.tripLengthGuidance ? (
+              <PackingGuidanceCard eyebrow="Trip length" section={climateProfile.tripLengthGuidance} />
+            ) : null}
+
+            {climateProfile.travelEssentialsGuidance ? (
+              <PackingGuidanceCard eyebrow="International essentials" section={climateProfile.travelEssentialsGuidance} />
             ) : null}
 
             {climateProfile.showWhyDifferent !== false ? (
@@ -580,7 +608,7 @@ export default async function DestinationMonthPackingListPage({ params }: PagePr
               <h2 className="text-lg font-black tracking-tight text-slate-950">Related pages</h2>
               <nav className="mt-4 grid gap-2 text-sm font-semibold text-slate-700">
                 {relatedLinks.map((link) => (
-                  <Link key={link.href} href={link.href} className="rounded-xl border border-slate-200 px-3 py-2 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950">
+                  <Link key={link.href} href={link.href} className="rounded-xl border border-slate-200 px-3 py-2 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                     {link.label}
                   </Link>
                 ))}

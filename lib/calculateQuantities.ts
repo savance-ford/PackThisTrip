@@ -72,7 +72,7 @@ export function calculateClothingQuantities(tripConfig: TripConfig): QuantityMap
     const longSleeveShirts = Math.max(1, Math.ceil(effectiveDays / 3));
     quantities["long-sleeve-shirts"] = longSleeveShirts * multiplier;
     quantities["t-shirts"] = Math.max(2, effectiveDays - longSleeveShirts) * multiplier;
-    quantities["sweater-hoodie"] = 1 * multiplier;
+    quantities["sweater-hoodie"] = (isCompactWardrobe || effectiveDays < 7 ? 1 : 2) * multiplier;
   } else {
     quantities["t-shirts"] = effectiveDays * multiplier;
   }
