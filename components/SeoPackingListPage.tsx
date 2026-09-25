@@ -106,7 +106,7 @@ export function SeoPackingListPage({
               <h2 className="text-lg font-black tracking-tight text-slate-950">Related pages</h2>
               <nav className="mt-4 grid gap-2 text-sm font-semibold text-slate-700">
                 {relatedLinks.map((link) => (
-                  <Link key={link.href} href={link.href} className="rounded-xl border border-slate-200 px-3 py-2 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950">
+                  <Link key={link.href} href={link.href} className="rounded-xl border border-slate-200 px-3 py-2 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                     {link.label}
                   </Link>
                 ))}

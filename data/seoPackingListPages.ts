@@ -43,7 +43,10 @@ const related = {
   mexicoJuly: { label: "What to pack for Mexico in July", href: "/packing-list/mexico/july" },
   mexicoJulyPackingList: { label: "Mexico in July packing list", href: "/packing-list/mexico/july" },
   packingForMexicoJuly: { label: "Packing for Mexico in July", href: "/packing-list/mexico/july" },
-  mexicoJulyCarryOn: { label: "Carry-on packing for Mexico in July", href: "/packing-list/mexico/july" }
+  mexicoJulyCarryOn: { label: "Carry-on packing for Mexico in July", href: "/packing-list/mexico/july" },
+  londonNovember: { label: "Packing for London in November", href: "/packing-list/london/november" },
+  londonNovemberCarryOn: { label: "London November carry-on guide", href: "/packing-list/london/november" },
+  londonLateAutumn: { label: "What to pack for London in late autumn", href: "/packing-list/london/november" }
 };
 
 export const seoPackingListPages = {
@@ -58,7 +61,7 @@ export const seoPackingListPages = {
       "Choose clothing pieces that can repeat across travel days, dinners, and sightseeing.",
       "Put documents, medication, chargers, and one change of clothes where they are easy to reach."
     ],
-    relatedLinks: [related.mexicoJulyCarryOn, related.weekend, related.international, related.sevenDay, related.business]
+    relatedLinks: [related.londonNovemberCarryOn, related.weekend, related.international, related.sevenDay, related.business]
   },
   beachVacationPackingList: {
     title: "Beach Vacation Packing List",
@@ -110,7 +113,7 @@ export const seoPackingListPages = {
       "Check outlet types and voltage before packing electronics that need more than a USB charger.",
       "Build around comfortable shoes; international city trips often include more walking than expected."
     ],
-    relatedLinks: [related.packingForMexicoJuly, related.carryOn, related.sevenDay, related.winter, related.summer]
+    relatedLinks: [related.londonNovember, related.carryOn, related.sevenDay, related.winter, related.packingForMexicoJuly]
   },
   familyVacationPackingList: {
     title: "Family Vacation Packing List",
@@ -175,7 +178,7 @@ export const seoPackingListPages = {
       "Wear your bulkiest coat or boots in transit when it helps save luggage space.",
       "Protect electronics and documents from rain, snow, and condensation."
     ],
-    relatedLinks: [related.international, related.sevenDay, related.carryOn, related.business]
+    relatedLinks: [related.londonLateAutumn, related.international, related.sevenDay, related.carryOn, related.business]
   },
   summerTravelPackingList: {
     title: "Summer Travel Packing List",

@@ -63,9 +63,9 @@ export const DESTINATIONS: Destination[] = [
     climateTags: ["cool", "rain", "city", "mild-summer"],
     isInternationalDefault: true,
     outletType: ["G"],
-    commonActivities: ["city", "museums", "business"],
+    commonActivities: ["city", "museums", "business", "dining", "theatre"],
     walkingHeavy: true,
-    notes: "London packing should account for rain, transit, walking, and cool shoulder-season weather."
+    notes: "London packing should account for extensive walking, public transport, possible rain, and frequent transitions between outdoor conditions and heated indoor spaces."
   },
   {
     slug: "mexico",

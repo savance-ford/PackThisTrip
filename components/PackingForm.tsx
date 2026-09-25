@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ACTIVITY_OPTIONS } from "@/data/activityModules";
+import { getClimateProfile } from "@/data/climateProfiles";
 import { DESTINATIONS } from "@/data/destinations";
 import { LUGGAGE_OPTIONS } from "@/data/luggageRules";
 import { TRAVELER_OPTIONS } from "@/data/travelerModules";
@@ -32,19 +33,34 @@ export function PackingForm({ initialConfig, onSubmit }: PackingFormProps) {
   const [tripTypes, setTripTypes] = useState<TripType[]>(initialConfig?.tripTypes ?? ["city"]);
   const [hasLaundry, setHasLaundry] = useState(initialConfig?.hasLaundry ?? false);
   const [packLight, setPackLight] = useState(initialConfig?.packLight ?? false);
-  const [rainExpected, setRainExpected] = useState(initialConfig?.rainExpected ?? selectedDestination.climateTags.includes("rain"));
-  const [coldWeather, setColdWeather] = useState(initialConfig?.coldWeather ?? selectedDestination.climateTags.some((tag) => tag.includes("cold") || tag === "cool"));
-  const [hotWeather, setHotWeather] = useState(initialConfig?.hotWeather ?? selectedDestination.climateTags.some((tag) => tag.includes("hot") || tag === "tropical"));
+  const initialClimateProfile = getClimateProfile(destinationSlug, month);
+  const initialRainRelevant = initialConfig
+    ? Boolean(initialConfig.rainExpected || initialConfig.rainPossible)
+    : Boolean(initialClimateProfile?.rainExpected || initialClimateProfile?.rainPossible || selectedDestination.climateTags.includes("rain"));
+  const [rainExpected, setRainExpected] = useState(initialRainRelevant);
+  const [coldWeather, setColdWeather] = useState(initialConfig?.coldWeather ?? initialClimateProfile?.coldWeather ?? selectedDestination.climateTags.some((tag) => tag.includes("cold")));
+  const [hotWeather, setHotWeather] = useState(initialConfig?.hotWeather ?? initialClimateProfile?.hotWeather ?? selectedDestination.climateTags.some((tag) => tag.includes("hot") || tag === "tropical"));
   const [isInternational, setIsInternational] = useState(initialConfig?.isInternational ?? selectedDestination.isInternationalDefault);
   const [error, setError] = useState<string | null>(null);
+
+  function applyClimateDefaults(slug: string, selectedMonth: string) {
+    const nextDestination = DESTINATIONS.find((destination) => destination.slug === slug) ?? firstDestination;
+    const profile = getClimateProfile(slug, selectedMonth);
+    setRainExpected(profile ? Boolean(profile.rainExpected || profile.rainPossible) : nextDestination.climateTags.includes("rain"));
+    setColdWeather(profile?.coldWeather ?? nextDestination.climateTags.some((tag) => tag.includes("cold")));
+    setHotWeather(profile?.hotWeather ?? nextDestination.climateTags.some((tag) => tag.includes("hot") || tag === "tropical"));
+  }
 
   function updateDestination(slug: string) {
     const nextDestination = DESTINATIONS.find((destination) => destination.slug === slug) ?? firstDestination;
     setDestinationSlug(slug);
     setIsInternational(nextDestination.isInternationalDefault);
-    setRainExpected(nextDestination.climateTags.includes("rain"));
-    setColdWeather(nextDestination.climateTags.some((tag) => tag.includes("cold") || tag === "cool"));
-    setHotWeather(nextDestination.climateTags.some((tag) => tag.includes("hot") || tag === "tropical"));
+    applyClimateDefaults(slug, month);
+  }
+
+  function updateMonth(nextMonth: string) {
+    setMonth(nextMonth);
+    applyClimateDefaults(destinationSlug, nextMonth);
   }
 
   function toggleTripType(value: TripType) {
@@ -65,6 +81,7 @@ export function PackingForm({ initialConfig, onSubmit }: PackingFormProps) {
     }
 
     setError(null);
+    const climateProfile = getClimateProfile(destinationSlug, month);
 
     onSubmit({
       destinationSlug,
@@ -79,7 +96,15 @@ export function PackingForm({ initialConfig, onSubmit }: PackingFormProps) {
       rainExpected,
       coldWeather,
       hotWeather,
-      isInternational: isInternational || tripTypes.includes("international")
+      isInternational: isInternational || tripTypes.includes("international"),
+      mildWeather: climateProfile?.mildWeather,
+      coolWeather: climateProfile?.coolWeather,
+      coolEvenings: climateProfile?.coolEvenings,
+      rainPossible: rainExpected ? climateProfile?.rainPossible : false,
+      dampWeather: climateProfile?.dampWeather,
+      windPossible: climateProfile?.windPossible,
+      layersRecommended: climateProfile?.layersRecommended,
+      variableRegionalClimate: climateProfile?.variableRegionalClimate
     });
   }
 
@@ -103,7 +128,7 @@ export function PackingForm({ initialConfig, onSubmit }: PackingFormProps) {
 
         <label className="block">
           <span className="text-sm font-bold text-slate-700">Month</span>
-          <select value={month} onChange={(event) => setMonth(event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-950/10">
+          <select value={month} onChange={(event) => updateMonth(event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-950/10">
             {MONTHS.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
         </label>
@@ -149,7 +174,7 @@ export function PackingForm({ initialConfig, onSubmit }: PackingFormProps) {
           {[
             ["hasLaundry", "Laundry access", hasLaundry, setHasLaundry],
             ["packLight", "Pack light mode", packLight, setPackLight],
-            ["rainExpected", "Rain expected", rainExpected, setRainExpected],
+            ["rainExpected", "Rain possible / expected", rainExpected, setRainExpected],
             ["coldWeather", "Cold weather", coldWeather, setColdWeather],
             ["hotWeather", "Hot weather", hotWeather, setHotWeather],
             ["isInternational", "International trip", isInternational, setIsInternational]

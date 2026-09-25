@@ -25,7 +25,11 @@ export function getDestinationMonthTripConfig(destinationSlug: string, month: st
     hotWeather: climateProfile.hotWeather,
     isInternational: destination.isInternationalDefault,
     mildWeather: climateProfile.mildWeather,
+    coolWeather: climateProfile.coolWeather,
     coolEvenings: climateProfile.coolEvenings,
+    rainPossible: climateProfile.rainPossible,
+    dampWeather: climateProfile.dampWeather,
+    windPossible: climateProfile.windPossible,
     layersRecommended: climateProfile.layersRecommended,
     variableRegionalClimate: climateProfile.variableRegionalClimate
   };

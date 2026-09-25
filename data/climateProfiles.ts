@@ -42,7 +42,14 @@ export type ClimateProfile = {
   regionalGuidance?: RegionalPackingGuidance[];
   checklistIntro?: string;
   footwearGuidance?: PackingGuidanceSection;
+  rainGuidance?: PackingGuidanceSection;
   carryOnGuidance?: PackingGuidanceSection;
+  tripLengthGuidance?: PackingGuidanceSection;
+  travelEssentialsGuidance?: PackingGuidanceSection;
+  relatedPackingLists?: Array<{
+    label: string;
+    href: string;
+  }>;
   notToPack?: string[];
   packingTips?: string[];
   faqs?: PackingFaq[];
@@ -57,7 +64,11 @@ export type ClimateProfile = {
   coldWeather: boolean;
   rainExpected: boolean;
   mildWeather?: boolean;
+  coolWeather?: boolean;
   coolEvenings?: boolean;
+  rainPossible?: boolean;
+  dampWeather?: boolean;
+  windPossible?: boolean;
   layersRecommended?: boolean;
   variableRegionalClimate?: boolean;
 };
@@ -261,18 +272,172 @@ export const CLIMATE_PROFILES: ClimateProfile[] = [
   {
     destinationSlug: "london",
     month: "november",
-    avgTempF: 48,
-    weatherSummary: "November in London is cool, damp, and changeable, with frequent overcast days and rain possible during city sightseeing.",
-    rainLikelihood: "high",
+    defaultDurationDays: 7,
+    typicalTemperature: "Cool to chilly, especially in the morning and after sunset",
+    intro: "Packing for London in November is mostly about practical layers, rain protection, and comfortable walking shoes. Cool, damp, or breezy streets can contrast with heated museums, restaurants, shops, and trains, so removable layers are more useful than a suitcase full of bulky winter clothing. The checklist adapts to trip length, luggage, activities, traveler type, laundry access, and packing style.",
+    rainSummary: "Showers and damp conditions are possible; steady rain every day is not assumed",
+    packingFocus: "Removable layers, a weather-resistant jacket, proven walking shoes, and compact rain protection",
+    forecastNote: "This monthly profile is a planning guide, not a live forecast. Check London's forecast shortly before departure, especially if you expect long outdoor days or evening events.",
+    weatherHeading: "What Is London Like in November?",
+    weatherSummary: "November is late autumn in London. Conditions are generally cool, with colder-feeling mornings and evenings, possible rain, damp pavement, occasional wind, and shorter daylight. Indoor attractions and public transport are often heated, and snow is not treated as a normal expectation for a typical trip. Pack removable layers, compact rain protection, and useful walking shoes rather than defaulting to extreme winter gear.",
+    rainLikelihood: "medium",
     recommendedTripTypes: ["city", "international"],
-    packingNotes: [
-      "Rain protection should be easy to reach because showers can interrupt walking and transit days.",
-      "Pack warm layers that work indoors and outdoors instead of relying on one heavy coat.",
-      "The United Kingdom uses Type G outlets, so a UK plug adapter belongs on the electronics list."
+    checklistIntro: "This checklist starts with a seven-day solo carry-on plan and uses PackThisTrip's shared quantity and recommendation rules. Open the generator to test a weekend, a longer trip, checked luggage, laundry access, family travel, or a pack-light preference.",
+    wearGuidance: [
+      {
+        heading: "Daytime sightseeing",
+        body: "Build a practical outfit from comfortable trousers or pants, a long-sleeve shirt or other base layer, a sweater or cardigan, a weather-resistant jacket, and broken-in walking shoes. Each piece should work in more than one combination."
+      },
+      {
+        heading: "Cool mornings and evenings",
+        body: "Keep an additional mid-layer or scarf available when early starts and evenings feel colder. Light gloves or slightly warmer outerwear are optional for travelers who run cold or expect to spend long periods outdoors."
+      },
+      {
+        heading: "Rainy or damp days",
+        body: "Use a water-resistant jacket as the everyday outer layer and keep a compact umbrella available when the forecast warrants it. Reasonably rain-resistant walking shoes are more practical for normal city plans than heavy technical boots."
+      },
+      {
+        heading: "Indoor activities",
+        body: "Museums, restaurants, shops, theatres, and public transportation can feel much warmer than the street. Base and mid-layers that are easy to remove help you adjust without carrying a second outfit."
+      },
+      {
+        heading: "Nicer evenings",
+        body: "One smart-casual outfit can cover a restaurant, theatre performance, or evening plan. Build it from pieces that also work during the rest of the trip."
+      }
     ],
+    footwearGuidance: {
+      heading: "Best Shoes for London in November",
+      body: "London sightseeing can combine long walks, Underground stations, stairs, pavement, museums, attractions, markets, neighborhoods, and day trips. Make a comfortable, broken-in, reasonably rain-resistant walking shoe your main pair.",
+      points: [
+        "One dependable walking pair is enough for many short trips and carry-on travelers.",
+        "A second lightweight pair can help on a longer trip if the main pair gets wet, but avoid packing several bulky options.",
+        "Ordinary urban sightseeing rarely requires heavy technical rain boots."
+      ]
+    },
+    rainGuidance: {
+      heading: "Do You Need a Rain Jacket or Umbrella in London in November?",
+      body: "Rain is possible, but the list does not assume constant wet weather. A compact umbrella is small and easy to carry for city sightseeing, while a water-resistant jacket keeps your hands free and doubles as an everyday outer layer when conditions feel windy or changeable.",
+      points: [
+        "Minimalist packers can choose the option that best fits the forecast and their preferred way of sightseeing rather than automatically bringing both.",
+        "Keep whichever rain option you choose easy to reach in a day bag."
+      ]
+    },
+    carryOnGuidance: {
+      heading: "Can You Pack Carry-On Only for London in November?",
+      body: "Yes, many travelers can, depending on trip duration and personal needs. Repeatable base layers, one or two mid-layers, one weather-resistant jacket, and limited footwear keep a cool-weather wardrobe compact without making carry-on-only the right choice for everyone.",
+      points: [
+        "Wear the bulkiest shoes and outer layer during travel.",
+        "Choose mix-and-match pieces instead of packing a separate outfit for every day.",
+        "Use laundry on a 10- to 14-day trip instead of scaling every clothing quantity with trip length.",
+        "Keep a second pair of shoes optional and use travel-size toiletries."
+      ],
+      relatedLink: {
+        label: "See the carry-on packing list",
+        href: "/carry-on-packing-list"
+      }
+    },
+    tripLengthGuidance: {
+      heading: "Packing for a Weekend, a Week, or 10 Days in London",
+      body: "Trip length changes quantities, not the basic layering strategy. The generated checklist remains responsible for the exact counts.",
+      points: [
+        "Weekend: keep the wardrobe minimal with repeatable layers, one main walking pair, and compact toiletries.",
+        "5-7 days: use a slightly larger base-layer rotation while repeating trousers, sweaters, and the same outer layer.",
+        "10-14 days: plan laundry instead of packing 10-14 unique outfits, and add a lightweight second shoe pair only if luggage space and personal needs justify it."
+      ],
+      relatedLink: {
+        label: "Customize trip length and quantities",
+        href: "/packing-list-generator"
+      }
+    },
+    travelEssentialsGuidance: {
+      heading: "UK Travel and Power Essentials",
+      body: "Keep the international basics together: passport, travel documents, phone, charging cable, portable power bank, medications, and toiletries. International travelers whose plugs differ from UK outlets should pack the appropriate Type G plug adapter and check their own device requirements.",
+      relatedLink: {
+        label: "See the international travel packing list",
+        href: "/international-travel-packing-list"
+      }
+    },
+    relatedPackingLists: [
+      { label: "Iceland November Packing List", href: "/packing-list/iceland/november" },
+      { label: "New York December Packing List", href: "/packing-list/new-york/december" }
+    ],
+    notToPack: [
+      "An extreme winter coat by default. A weather-resistant outer layer plus removable layers is more flexible for a typical urban itinerary.",
+      "Several bulky coats or sweaters. One weather-resistant outer layer and one or two repeatable mid-layers usually work better.",
+      "Too many shoes. Prioritize one proven walking pair and add a lightweight backup only when trip length and luggage space justify it.",
+      "Heavy technical rain gear for ordinary sightseeing. A practical jacket and compact umbrella usually provide a more useful city setup.",
+      "A separate outfit for every day. Rewear trousers and mid-layers, and use laundry on longer trips.",
+      "Oversized toiletries, specialized outdoor equipment, or inflexible single-use clothing unless the itinerary genuinely requires them."
+    ],
+    packingNotes: [
+      "Removable base, mid, and outer layers make it easier to adjust between cool streets and heated indoor spaces.",
+      "A water-resistant jacket and compact umbrella provide useful backup for November showers without assuming rain every day.",
+      "Comfortable, broken-in walking shoes matter because sightseeing and public transport can add up to long days on foot.",
+      "A scarf adds useful warmth in breezy or damp conditions without taking much suitcase space.",
+      "Carry-on travelers should keep footwear minimal and make one versatile walking pair the priority.",
+      "Outdoor sightseeing can feel cooler after sunset, so keep a removable layer accessible during shorter November days.",
+      "Travelers planning long outdoor days or who run cold can add a lightweight thermal layer or gloves.",
+      "The United Kingdom uses Type G outlets, so international travelers should check their devices and pack the appropriate plug adapter."
+    ],
+    packingTips: [
+      "Build outfits from a base layer, repeatable mid-layer, and one weather-resistant outer layer.",
+      "Wear the bulkiest shoes and outer layer during travel to protect carry-on space.",
+      "Keep a compact umbrella near the top of your day bag instead of buried in your luggage.",
+      "Prioritize broken-in walking shoes and avoid adding extra pairs without a clear use.",
+      "Plan laundry for a 10- to 14-day trip so shirts, underwear, and socks do not scale one-for-one with every day.",
+      "Carry a portable charger for navigation, tickets, photos, and transit information during long days away from your lodging.",
+      "Leave some luggage room for purchases instead of filling every packing cube before departure."
+    ],
+    faqs: [
+      {
+        question: "What should I pack for London in November?",
+        answer: "Pack repeatable base layers, comfortable trousers, a sweater or cardigan, a water-resistant jacket, proven walking shoes, and compact rain protection. Add travel documents, medications, charging gear, and the personal items shown in the generated checklist."
+      },
+      {
+        question: "What should I wear in London in November?",
+        answer: "A practical daytime combination is a long-sleeve top, comfortable trousers, a removable sweater or cardigan, a weather-resistant jacket, and broken-in walking shoes. Keep a scarf handy and adjust the warmth for your forecast and time outdoors."
+      },
+      {
+        question: "Is London cold in November?",
+        answer: "London is generally cool to chilly in November, and damp or windy conditions can make mornings and evenings feel colder. Most city trips benefit from flexible layers rather than automatically requiring extreme winter clothing."
+      },
+      {
+        question: "Does it rain a lot in London in November?",
+        answer: "Rain and damp conditions are possible, but this guide does not assume it rains constantly. Bring compact protection and check the forecast shortly before departure."
+      },
+      {
+        question: "Do I need a winter coat in London in November?",
+        answer: "Not every traveler needs a heavy winter coat. A water-resistant outer layer over removable base and mid-layers is more flexible for a typical city itinerary; choose something warmer if you run cold or expect long outdoor periods."
+      },
+      {
+        question: "Should I bring an umbrella to London in November?",
+        answer: "A compact umbrella is a useful city-friendly backup. Minimalist travelers may prefer a water-resistant jacket instead, particularly when wind or hands-free convenience matters."
+      },
+      {
+        question: "What shoes should I wear in London in November?",
+        answer: "Choose comfortable, broken-in walking shoes with dependable grip and some rain resistance. One main pair is often enough for a short trip; a lightweight second pair can help on longer itineraries."
+      },
+      {
+        question: "Can I pack carry-on only for London?",
+        answer: "Many travelers can, depending on duration and personal needs. Wear bulky pieces in transit, limit shoes, use travel-size toiletries, repeat versatile layers, and plan laundry for a longer trip."
+      },
+      {
+        question: "How should I pack for a week in London in November?",
+        answer: "For a week, use a modest rotation of base layers and underwear while repeating trousers, sweaters, and one outer layer. The generated checklist starts with a seven-day carry-on setup and can be customized for luggage, laundry, activities, and packing style."
+      }
+    ],
+    showWhyDifferent: false,
+    metadataTitle: "What to Pack for London in November: Complete Packing List",
+    metadataDescription: "Build a smart London November packing list with practical layers, rain protection, comfortable walking shoes, travel essentials, and carry-on tips.",
     hotWeather: false,
-    coldWeather: true,
-    rainExpected: true
+    coldWeather: false,
+    rainExpected: false,
+    rainPossible: true,
+    coolWeather: true,
+    coolEvenings: true,
+    dampWeather: true,
+    windPossible: true,
+    layersRecommended: true
   },
   {
     destinationSlug: "new-york",

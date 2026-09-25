@@ -50,6 +50,8 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   const hasOutdoorRainPlan = tripTypes.some((tripType) => ["disney", "hiking", "camping"].includes(tripType));
   const cityOrWalking = Boolean(destination?.walkingHeavy || tripTypes.includes("city"));
   const diningRelevant = Boolean(destination?.commonActivities.some((activity) => ["food", "dining"].includes(activity)));
+  const rainRelevant = tripConfig.rainExpected || tripConfig.rainPossible;
+  const coolLayeredWeather = Boolean(tripConfig.coolWeather);
 
   const addItem = (id: string, reason: string, optional = false, quantity?: number) => {
     const base = PACKING_ITEMS[id];
@@ -84,31 +86,41 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
   addItem("toothpaste", "Added as a daily hygiene essential.");
   addItem("deodorant", "Added as a daily hygiene essential.");
   addItem("underwear", "Quantity is calculated from trip length, laundry access, pack-light mode, and traveler type.");
-  addItem("socks", "Quantity is calculated from trip length, laundry access, pack-light mode, and traveler type.");
+  addItem("socks", cityOrWalking
+    ? "Practical socks help keep long walking and transit days comfortable; quantity accounts for trip length, laundry, and packing style."
+    : "Quantity is calculated from trip length, laundry access, pack-light mode, and traveler type.");
   addItem("id", "Added because ID is needed for airports, lodging, car rentals, and emergencies.");
   addItem("luggage-tag", "Added to make bags easier to identify if they are separated or checked.");
   addItem("t-shirts", tripConfig.hotWeather
     ? `Included as versatile lightweight tops for typical hot-weather days during ${tripLabel}.`
+    : tripConfig.coolWeather
+      ? "T-shirts work as repeatable base layers beneath a sweater and outer layer, and can be worn alone in heated indoor spaces."
     : tripConfig.mildWeather
       ? `Lightweight or medium-weight tops form a repeatable base for mild ${prettyMonth(tripConfig.month)} days.`
       : "Added as a versatile core clothing item based on your trip length.");
   addItem("pants", tripConfig.hotWeather
     ? "A small number of lightweight pants adds coverage for travel, sightseeing, or dining while keeping a warm-weather wardrobe compact."
+    : tripConfig.coolWeather
+      ? "Comfortable trousers or pants can be reworn across cool-weather sightseeing days, keeping the wardrobe compact."
     : "Added as reusable bottoms with smart quantity capping instead of one pair per day.");
   addItem("sleepwear", "Added for overnight comfort without overpacking.");
   addItem("hand-sanitizer", "Added as a compact hygiene item for flights, transit, and public spaces.", true);
   addItem("medicine-kit", "Added as a small backup for common travel issues like headaches, stomach discomfort, or minor scrapes.", true);
   addItem("personal-medications", "Keep required medications accessible, with enough for the trip and reasonable delay time.");
 
-  if (tripConfig.durationDays >= 3) {
+  if (tripConfig.durationDays >= 3 && !(rainRelevant && coolLayeredWeather)) {
     addItem("light-jacket", tripConfig.coolEvenings
       ? `Useful for cooler ${prettyMonth(tripConfig.month)} mornings and evenings without taking up much suitcase space.`
       : "Added as a flexible layer for cool planes, evenings, or changing indoor temperatures.", true);
   }
 
   if (tripConfig.layersRecommended && !tripConfig.coldWeather) {
-    addItem("long-sleeve-shirts", `Useful as a breathable layer when ${tripLabel} shifts between mild days and cooler conditions.`);
-    addItem("sweater-hoodie", "One light sweater or cardigan adds warmth for cooler mornings and evenings without the bulk of a heavy coat.");
+    addItem("long-sleeve-shirts", `Long-sleeve tops create a comfortable base layer when ${tripLabel} shifts between indoor and outdoor conditions.`);
+    addItem("sweater-hoodie", "A sweater or cardigan works as a repeatable mid-layer that can be removed in heated indoor spaces.");
+
+    if (tripConfig.coolWeather && (tripConfig.windPossible || tripConfig.coolEvenings)) {
+      addItem("thermal-base-layer", "A lightweight thermal can add warmth for long outdoor days or travelers who run cold without requiring a bulky coat.", true);
+    }
   }
 
   // International rules
@@ -151,13 +163,17 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
 
   // Destination walking note
   if (cityOrWalking) {
-    addItem("walking-shoes", destination?.walkingHeavy ? `${tripConfig.destinationName} trips often involve long walking and transit days, so comfortable shoes are worth prioritizing.` : "City trips usually involve long walking days, airports, tours, and sightseeing.");
+    addItem("walking-shoes", destination?.walkingHeavy ? `${tripConfig.destinationName} sightseeing can involve long walking and transit days, so comfortable broken-in shoes are worth prioritizing.` : "City trips usually involve long walking days, airports, tours, and sightseeing.");
     addItem("daypack", "Useful for carrying water, documents, a portable battery, and weather protection during long sightseeing days.", !destination?.walkingHeavy);
     addItem("portable-charger", "Navigation, photos, translation, and transit apps can drain a phone battery during a full day away from your lodging.", !destination?.walkingHeavy);
     addItem("reusable-water-bottle", "Keeps water handy during long walking, sightseeing, and transit days.", true);
     addItem("reusable-tote", "A compact reusable tote adds useful space for shopping, snacks, or items picked up during the day.", true);
 
-    if (tripConfig.durationDays >= 8) {
+    const secondPairFits = tripConfig.luggageType === "carry-on"
+      ? tripConfig.durationDays >= 10 && !tripConfig.packLight
+      : tripConfig.durationDays >= 8;
+
+    if (secondPairFits) {
       addItem("casual-shoes", "An optional second casual pair lets walking shoes dry or rest on a longer trip; skip it if carry-on space is tight.", true);
     }
 
@@ -177,17 +193,31 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
     addItem("sweater-hoodie", "Added as a mid-layer for cold weather and transit.");
   }
 
-  if (tripConfig.rainExpected) {
-    addItem("packable-rain-jacket", `Added because ${tripLabel} can bring quick showers or wet travel days, and a compact rain layer keeps plans flexible.`);
-    addItem("umbrella", "Added as a compact rain backup for city walks, hotel transfers, and sightseeing when showers pass through.", true);
+  if (rainRelevant) {
+    if (coolLayeredWeather && cityOrWalking) {
+      addItem("weather-resistant-jacket", `A water-resistant jacket helps with possible ${prettyMonth(tripConfig.month)} showers while still working as an everyday outer layer.`);
+    } else {
+      addItem("packable-rain-jacket", `Useful because ${tripLabel} can bring showers or wet travel days, and a compact rain layer keeps plans flexible.`);
+    }
+
+    addItem(
+      "umbrella",
+      "A compact umbrella provides rain protection without taking much room in a day bag.",
+      !(coolLayeredWeather && cityOrWalking)
+    );
 
     if (cityOrWalking) {
-      addItem("walking-shoes", "If the local forecast is wet, choose a pair that can handle rain and slick pavement rather than packing bulky rain boots.");
+      addItem("walking-shoes", "Choose a reasonably rain-resistant pair with dependable grip for damp pavement instead of packing bulky technical rain boots.");
     }
 
     if (hasOutdoorRainPlan) {
       addItem("poncho", "Added because theme parks, hiking, camping, or other outdoor-heavy plans are easier with quick rain coverage.", true);
     }
+  }
+
+  if (tripConfig.coolWeather) {
+    addItem("scarf", "A scarf adds compact warmth when damp or breezy conditions make outdoor sightseeing feel cooler.");
+    addItem("gloves", "Light gloves can help travelers who run cold or expect long outdoor periods, especially in the morning or after sunset.", true);
   }
 
   if (tripConfig.hotWeather) {
@@ -204,7 +234,7 @@ export function generatePackingList(tripConfig: TripConfig): PackingItem[] {
     addItem("lip-balm", "Added because sun, heat, flights, and long outdoor days can dry out lips.", true);
   }
 
-  if (isTropicalOrHumid && (tripConfig.hotWeather || tripConfig.rainExpected || tripTypes.includes("beach"))) {
+  if (isTropicalOrHumid && (tripConfig.hotWeather || rainRelevant || tripTypes.includes("beach"))) {
     addItem("bug-spray", "Added because tropical, humid, rainy, or outdoor-heavy destinations can mean mosquitoes and other insects.", true);
   }
 

@@ -11,6 +11,7 @@ export const PACKING_ITEMS: Record<string, BasePackingItem> = {
   sleepwear: { id: "sleepwear", name: "Sleepwear", category: "clothing", tags: ["core"] },
   "sweater-hoodie": { id: "sweater-hoodie", name: "Sweater or hoodie", category: "clothing", tags: ["layers", "cold"] },
   "light-jacket": { id: "light-jacket", name: "Light jacket", category: "clothing", tags: ["layers", "transit"] },
+  "weather-resistant-jacket": { id: "weather-resistant-jacket", name: "Water-resistant jacket", category: "clothing", tags: ["rain", "cool", "layers"] },
   "warm-coat": { id: "warm-coat", name: "Warm coat", category: "clothing", tags: ["cold", "winter"] },
   swimsuit: { id: "swimsuit", name: "Swimsuit", category: "clothing", tags: ["beach", "cruise"] },
   "dress-outfit": { id: "dress-outfit", name: "Dress outfit", category: "clothing", tags: ["cruise", "dining", "formal"] },
